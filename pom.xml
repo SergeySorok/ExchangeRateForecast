@@ -12,9 +12,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <commons.lang.version>2.6</commons.lang.version>
         <net.sf.opencsv.version>2.3</net.sf.opencsv.version>
-        <commons.cli.version>1.2</commons.cli.version>
-        <org.projectlombok.version>1.18.22</org.projectlombok.version>
-        <com.github.sh0nk.version>0.5.0</com.github.sh0nk.version>
+        <commons.cli.version>RELEASE</commons.cli.version>
+        <org.projectlombok.version>RELEASE</org.projectlombok.version>
+        <com.github.sh0nk.version>RELEASE</com.github.sh0nk.version>
         <org.telegram.telegrambots.version>5.7.1</org.telegram.telegrambots.version>
         <org.telegram.telegrambotsextensions.version>5.7.1</org.telegram.telegrambotsextensions.version>
     </properties>
