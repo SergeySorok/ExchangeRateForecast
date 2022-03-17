@@ -1,42 +1,46 @@
 package ru.liga.service;
 
-import ru.liga.calculate.CalculationType;
-import ru.liga.currency.Currency;
+import com.github.sh0nk.matplotlib4j.Plot;
+import ru.liga.algorithm.Algorithm;
+import ru.liga.calculate.Period;
+import ru.liga.currency.CurrencyFile;
 import ru.liga.dao.CurrenciesDAO;
+import ru.liga.dao.MyCurrency;
 
-import java.io.FileNotFoundException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RateService {
-    private RateService() {
 
-    }
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
 
-    /**
-     * Формирует результат запросы - дата и курс.
-     * @param currency Путь к БД.
-     * @param calculationType Период прогноза.
-     * @return возвращает строку с результатом даты и курса.
-     * @throws FileNotFoundException
-     * @throws ParseException
-     */
-    public static String calculateRate(Currency currency, CalculationType calculationType)
-            throws FileNotFoundException, ParseException {
-
-        int intPeriod = calculationType.calculationPeriod - DayService.actualNumberOfDays();
-        DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
+    public static String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < intPeriod; i++) {
-            LocalDate localDate = LocalDate.now().plusDays(i+1);
-            StringBuilder dateString = new StringBuilder(dataFormat.format(localDate));
-            List<Double> rate = CurrenciesDAO.getPrognosisCurrencies(calculationType, currency, 7);
-
-            result.append(String.format("%s - %.2f", dateString, rate.get(i))).append("\n");
+        LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
+        List<MyCurrency> currencies = CurrenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
+        for (int i = period.getCalculationPeriod() - 1; i >= 0; i--) {
+            String dateString = currencies.get(i).getDate().format(DATE_FORMAT);
+            result.append(String.format("%s - %.2f", dateString, currencies.get(i).getRate())).append("\n");
         }
         return result.toString();
+    }
+
+    public static List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) {
+        LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
+        List<MyCurrency> currencies = CurrenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
+        List<Double> doubleList = new ArrayList<>();
+        for (int i = period.getCalculationPeriod() - 1; i >= 0; i--) {
+            doubleList.add(currencies.get(i).getRate());
+        }
+
+        return doubleList;
+    }
+
+    public static String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) {
+        List<MyCurrency> rate = CurrenciesDAO.getPrognosisCurrencies(currency, date, algorithm);
+        return String.format("%s - %.2f", rate.get(0).getDate().format(DATE_FORMAT), rate.get(0).getRate());
     }
 }
 

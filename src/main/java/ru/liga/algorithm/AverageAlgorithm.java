@@ -1,31 +1,28 @@
 package ru.liga.algorithm;
 
+import ru.liga.dao.MyCurrency;
+
+import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Алгоритм прогнозирования курса
- */
+
 public final class AverageAlgorithm implements Algorithm {
-    public static final AverageAlgorithm INSTANCE = new AverageAlgorithm();
 
-    private AverageAlgorithm() {
-    }
-
-    /**
-     * Алгоритм прогнозирования курса на основе данных с предыдущими курсами
-     *
-     * @param courses Принимает данные с курсами валют
-     * @return Прогнозируемый курс на основании среднего значения
-     */
-    public double calculate(List<Double> courses) {
-        if (courses == null || courses.isEmpty()) {
-            return 0;
+    @Override
+    public List<MyCurrency> calculate(List<MyCurrency> currencies, LocalDate date) {
+        if (currencies == null || currencies.isEmpty()) {
+            return null;
         }
-        double averageCourses = 0;
-        for (double d : courses) {
-            averageCourses += d;
+        var average = currencies.stream()
+                .mapToDouble(x -> x.getRate() / x.getNominalValue())
+                .average()
+                .getAsDouble();
+        for (var pivot = currencies.get(0).getDate(); pivot.isBefore(date) || pivot.isEqual(date); pivot = pivot.plusDays(1)) {
+            var nextCurrency = new MyCurrency();
+            nextCurrency.setDate(pivot);
+            nextCurrency.setRate(average);
+            currencies.add(0, nextCurrency);
         }
-        averageCourses /= courses.size();
-        return averageCourses;
+        return currencies;
     }
 }
