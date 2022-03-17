@@ -1,142 +1,59 @@
 package ru.liga.dao;
 
-import ru.liga.algorithm.AverageAlgorithm;
-import ru.liga.calculate.CalculationType;
-import ru.liga.currency.Currency;
-import ru.liga.service.DayService;
+import ru.liga.algorithm.Algorithm;
+import ru.liga.currency.CurrencyFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
-/**
- * Формирует лист с курсами валют.
- */
 
 public class CurrenciesDAO {
 
-    /**
-     * Считывает БД и формирует лист с курсами.
-     *
-     * @param currency Путь к БД.
-     * @return Лист с курсами валют.
-     * @throws FileNotFoundException
-     * @throws ParseException
-     */
-    public static List<Double> getCurrenciesDataBase(Currency currency) throws IOException {
-        File file = new File(currency.getFilePath());
-        List<Double> listParse = new ArrayList<>();
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-        try (Scanner fileScanner = new Scanner(file)) {
-            if (fileScanner.hasNextLine()) {
-                fileScanner.nextLine();
-            }
-            while (fileScanner.hasNextLine()) {
-                String[] s = fileScanner.nextLine().split(";");
-
-                double d = NumberFormat.getInstance(new Locale("RU")).parse(s[1]).doubleValue();
-                listParse.add(d);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
+    public static List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) {
+        var stream = CurrenciesDAO.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
+        assert stream != null;
+        var reader = new BufferedReader(new InputStreamReader(stream));
+        List<MyCurrency> listParse = reader.lines()
+                .skip(1)
+                .map(s -> s.split(";"))
+                .map(x -> {
+                    MyCurrency myCurrency = new MyCurrency();
+                    myCurrency.setNominalValue(Double.parseDouble(x[0]));
+                    LocalDate date = LocalDate.parse(x[1], DATE_FORMAT);
+                    myCurrency.setDate(date);
+                    try {
+                        double rate = NumberFormat.getInstance(new Locale("RU")).parse(x[2].replace("\"", "")).doubleValue();
+                        myCurrency.setRate(rate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return myCurrency;
+                })
+                .collect(Collectors.toList());
         return listParse;
-    }
-
-    /**
-     * Считывает БД и формирует лист с курсами с определенным в параметрах количеством записей.
-     *
-     * @param currency Путь к БД.
-     * @param quantity Необходимое количество записей для анализа.
-     * @return Лист с необходимым количеством записей.
-     * @throws FileNotFoundException
-     * @throws ParseException
-     */
-    public static List<Double> getLastCurrenciesDataBase(Currency currency, int quantity) throws FileNotFoundException, ParseException {
-        File file = new File(currency.getFilePath());
-        List<Double> listParse = new ArrayList<>();
-        try (Scanner fileScanner = new Scanner(file)) {
-            if (fileScanner.hasNextLine()) {
-                fileScanner.nextLine();
-            }
-            for (int i = 0; i < quantity; i++) {
-
-                if (fileScanner.hasNextLine()) {
-                    String[] s = fileScanner.nextLine().split(";");
-                    double d = NumberFormat.getInstance(new Locale("RU")).parse(s[1]).doubleValue();
-                    listParse.add(d);
-                } else {
-                    break;
-                }
-            }
-        }
-        return listParse;
-    }
-
-
-    /**
-     * Считывает БД (+ создает записи на актуальную дату) и формирует лист с курсами с определенным в параметрах
-     * количеством записей.
-     *
-     * @param currency Путь к БД.
-     * @param quantity Необходимое количество записей для анализа.
-     * @return Лист с необходимым количеством записей на актуальную дату.
-     * @throws FileNotFoundException
-     * @throws ParseException
-     */
-    public static List<Double> getActualCurrencies(Currency currency, int quantity) throws FileNotFoundException, ParseException {
-        List<Double> listParse = getLastCurrenciesDataBase(currency, quantity);
-        Collections.reverse(listParse);
-        List<Double> listActualPeriod = new ArrayList<>();
-
-        for (int i = 0; i < DayService.actualNumberOfDays(); i++) {
-            double doubleListParse = AverageAlgorithm.INSTANCE.calculate(listParse);
-            listParse.add(doubleListParse);
-            listActualPeriod.add(doubleListParse);
-            if (listParse.size() > quantity) {
-                listParse.remove(0);
-            }
-            if (listActualPeriod.size() > quantity) {
-                listActualPeriod.remove(0);
-            }
-        }
-        return listActualPeriod;
     }
 
     /**
      * На основании актуализации информации из БД формирует лист с курсами с определенным в параметрах
      * количеством записей.
      *
-     * @param calculationType Период прогноза.
-     * @param currency        Путь к БД.
-     * @param quantity        Необходимое количество записей для анализа.
+     * @param date    Период прогноза.
+     * @param currencyFile Путь к БД.
      * @return Лист с прогнозируемым курсом.
-     * @throws FileNotFoundException
-     * @throws ParseException
      */
-    public static List<Double> getPrognosisCurrencies(CalculationType calculationType, Currency currency, int quantity) throws FileNotFoundException, ParseException {
-        List<Double> listParse = getActualCurrencies(currency, quantity);
-        List<Double> listNextPeriod = new ArrayList<>();
-        int intPeriod = calculationType.calculationPeriod - DayService.actualNumberOfDays();
-
-        for (int i = 0; i < intPeriod; i++) {
-            double doubleListParse = AverageAlgorithm.INSTANCE.calculate(listParse);
-            listParse.add(doubleListParse);
-            listNextPeriod.add(doubleListParse);
-            if (listParse.size() > quantity) {
-                listParse.remove(0);
-            }
-            if (intPeriod < listNextPeriod.size()) {
-                listNextPeriod.remove(0);
-            }
-        }
-        return listNextPeriod;
+    public static List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) {
+        List<MyCurrency> listParse = getActualCurrencies(currencyFile);
+        algorithm.calculate(listParse, date);
+        return listParse;
     }
 
 }
