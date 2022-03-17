@@ -10,7 +10,15 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <commons.lang.version>2.6</commons.lang.version>
+        <net.sf.opencsv.version>2.3</net.sf.opencsv.version>
+        <commons.cli.version>1.2</commons.cli.version>
+        <org.projectlombok.version>1.18.22</org.projectlombok.version>
+        <com.github.sh0nk.version>0.5.0</com.github.sh0nk.version>
+        <org.telegram.telegrambots.version>5.7.1</org.telegram.telegrambots.version>
+        <org.telegram.telegrambotsextensions.version>5.7.1</org.telegram.telegrambotsextensions.version>
     </properties>
+
     <name>mavendemo</name>
     <url>http://maven.apache.org</url>
 
@@ -18,46 +26,40 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons.lang.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>2.3</version>
+            <version>${net.sf.opencsv.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>RELEASE</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.sh0nk</groupId>
-            <artifactId>matplotlib4j</artifactId>
-            <version>0.5.0</version>
-        </dependency>
-        <!-- Telegram API -->
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambots</artifactId>
-            <version>5.7.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.telegram</groupId>
-            <artifactId>telegrambotsextensions</artifactId>
-            <version>5.7.1</version>
+            <version>${commons.cli.version}</version>
         </dependency>
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>${org.projectlombok.version}</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.sh0nk</groupId>
+            <artifactId>matplotlib4j</artifactId>
+            <version>${com.github.sh0nk.version}</version>
+        </dependency>
+        <!-- Telegram API -->
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${org.telegram.telegrambots.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambotsextensions</artifactId>
+            <version>${org.telegram.telegrambotsextensions.version}</version>
         </dependency>
     </dependencies>
 

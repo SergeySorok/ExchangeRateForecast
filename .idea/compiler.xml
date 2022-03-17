@@ -8,9 +8,11 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ExchangeRateForecast (ДЗ -2) (чистовик)" />
+        <module name="ExchangeRateForecast" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="ExchangeRateForecast" target="17" />
       <module name="ExchangeRateForecast (ДЗ -2) (чистовик)" target="17" />
     </bytecodeTargetLevel>
   </component>
