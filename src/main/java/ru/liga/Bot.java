@@ -23,7 +23,7 @@ public class Bot extends TelegramLongPollingCommandBot {
     public static void getTokenConfig() {
         Properties properties = new Properties();
         try {
-            properties.load(ExchangeRateForecast.class.getClassLoader().getResourceAsStream("config.properties"));
+            properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
             TOKEN = properties.getProperty("token");
         } catch (IOException e) {
             e.printStackTrace();
