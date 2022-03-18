@@ -5,8 +5,6 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
 
-import static ru.liga.currency.CurrencyFile.USD;
-
 public class GraphFormation {
 
     public Plot getPlot() {
@@ -17,27 +15,27 @@ public class GraphFormation {
         return plt;
     }
 
-    public String graphColor (CurrencyFile currencyFile) {
+    public String graphColor(CurrencyFile currencyFile) {
         String colorCurrency = "";
         try {
-        switch (currencyFile.name()) {
-            case "USD":
-                colorCurrency = "blue";
-                break;
-            case "EUR":
-                colorCurrency = "red";
-                break;
-            case "TRY":
-                colorCurrency = "orange";
-                break;
-            case "AMD":
-                colorCurrency = "purple";
-                break;
-            case "BGN":
-                colorCurrency = "yellow";
-                break;
-        }
-       //     default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
+            switch (currencyFile.name()) {
+                case "USD":
+                    colorCurrency = "blue";
+                    break;
+                case "EUR":
+                    colorCurrency = "red";
+                    break;
+                case "TRY":
+                    colorCurrency = "orange";
+                    break;
+                case "AMD":
+                    colorCurrency = "purple";
+                    break;
+                case "BGN":
+                    colorCurrency = "yellow";
+                    break;
+            }
+            //     default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
 
         } catch (Exception e) {
             e.getMessage();

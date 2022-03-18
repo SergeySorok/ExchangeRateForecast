@@ -1,6 +1,5 @@
 package ru.liga.service;
 
-import com.github.sh0nk.matplotlib4j.Plot;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
