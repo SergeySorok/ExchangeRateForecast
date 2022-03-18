@@ -21,10 +21,9 @@ public class InWorkToScatter {
     public static final String PHOTO_PATH = "src/main/resources/graph.png";
 
     public String launch(String[] args) throws Exception {
-        ParserInput parserInput = new ParserInput();
         CommandLine commandLine = ParserInput.parseCommand(args);
         String alg = commandLine.getOptionValue("alg");
-        Algorithm algorithm = parserInput.parseAlgorithm(alg);
+        Algorithm algorithm = ParserInput.parseAlgorithm(alg);
         GraphFormation graphFormation = new GraphFormation();
         Plot plt = graphFormation.getPlot();
         String result = "";
@@ -59,8 +58,6 @@ public class InWorkToScatter {
         }
         return null;
     }
-
-
     public void getPhoto(Plot plt) throws PythonExecutionException, IOException {
         plt.legend();
         plt.savefig(PHOTO_PATH).dpi(200);

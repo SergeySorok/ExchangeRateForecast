@@ -20,25 +20,6 @@ public class Bot extends TelegramLongPollingCommandBot {
     private static final String USERNAME = "GetExchangeRateForecast";
     private static String TOKEN;
 
-    public static void getTokenConfig() {
-        Properties properties = new Properties();
-        try {
-            properties.load(Main.class.getResourceAsStream("config.properties"));
-            TOKEN = properties.getProperty("token");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public String getBotUsername() {
-        return USERNAME;
-    }
-
-    @Override
-    public String getBotToken() {
-        return TOKEN;
-    }
 
     @Override
     public void processNonCommandUpdate(Update update) {
@@ -99,4 +80,24 @@ public class Bot extends TelegramLongPollingCommandBot {
 
         }
     }
+    public static void getTokenConfig() {
+        Properties properties = new Properties();
+        try {
+            properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
+            TOKEN = properties.getProperty("token");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return USERNAME;
+    }
+
+    @Override
+    public String getBotToken() {
+        return TOKEN;
+    }
+
 }

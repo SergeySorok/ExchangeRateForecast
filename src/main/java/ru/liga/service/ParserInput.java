@@ -47,7 +47,7 @@ public class ParserInput {
         return commandLine;
     }
 
-    public Algorithm parseAlgorithm(String alg) {
+    public static Algorithm parseAlgorithm(String alg) {
         Algorithm algorithm;
         switch (alg) {
             case "actual": algorithm =new ActualAlgorithm();
