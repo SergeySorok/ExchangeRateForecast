@@ -15,11 +15,12 @@ import java.util.List;
 public class RateService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
+    CurrenciesDAO currenciesDAO = new CurrenciesDAO();
 
-    public static String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
+    public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
         StringBuilder result = new StringBuilder();
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
-        List<MyCurrency> currencies = CurrenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
+        List<MyCurrency> currencies = currenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
         for (int i = period.getCalculationPeriod() - 1; i >= 0; i--) {
             String dateString = currencies.get(i).getDate().format(DATE_FORMAT);
             result.append(String.format("%s - %.2f", dateString, currencies.get(i).getRate())).append("\n");
@@ -27,9 +28,9 @@ public class RateService {
         return result.toString();
     }
 
-    public static List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) {
+    public List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) {
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
-        List<MyCurrency> currencies = CurrenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
+        List<MyCurrency> currencies = currenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
         List<Double> doubleList = new ArrayList<>();
         for (int i = period.getCalculationPeriod() - 1; i >= 0; i--) {
             doubleList.add(currencies.get(i).getRate());
@@ -38,8 +39,8 @@ public class RateService {
         return doubleList;
     }
 
-    public static String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) {
-        List<MyCurrency> rate = CurrenciesDAO.getPrognosisCurrencies(currency, date, algorithm);
+    public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) {
+        List<MyCurrency> rate = currenciesDAO.getPrognosisCurrencies(currency, date, algorithm);
         return String.format("%s - %.2f", rate.get(0).getDate().format(DATE_FORMAT), rate.get(0).getRate());
     }
 }

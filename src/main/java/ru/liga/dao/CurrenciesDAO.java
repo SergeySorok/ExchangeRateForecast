@@ -18,7 +18,7 @@ public class CurrenciesDAO {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    public static List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) {
+    public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) {
         var stream = CurrenciesDAO.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
         assert stream != null;
         var reader = new BufferedReader(new InputStreamReader(stream));
@@ -50,7 +50,7 @@ public class CurrenciesDAO {
      * @param currencyFile Путь к БД.
      * @return Лист с прогнозируемым курсом.
      */
-    public static List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) {
+    public List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) {
         List<MyCurrency> listParse = getActualCurrencies(currencyFile);
         algorithm.calculate(listParse, date);
         return listParse;

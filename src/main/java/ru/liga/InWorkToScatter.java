@@ -18,16 +18,18 @@ import java.time.format.DateTimeFormatter;
 public class InWorkToScatter {
     public static final String PHOTO_PATH = "src/main/resources/graph.png";
 
-    public static String launch(String[] args) throws Exception {
+    public String launch(String[] args) throws Exception {
+        ParserInput parserInput = new ParserInput();
         CommandLine commandLine = ParserInput.parseCommand(args);
         String alg = commandLine.getOptionValue("alg");
-        Algorithm algorithm = ParserInput.parseAlgorithm(alg);
+        Algorithm algorithm = parserInput.parseAlgorithm(alg);
 
         Plot plt = MyPlot.getPlot();
 
         String result = "";
-        String[] currencyArray = ParserInput.parseCurrency(args[1]);
+        String[] currencyArray = parserInput.parseCurrency(args[1]);
 
+        RateService rateService = new RateService();
         for (String currency : currencyArray) {
             CurrencyFile currencyString = parseCurrency(currency);
             if (currency == null) {
@@ -35,13 +37,13 @@ public class InWorkToScatter {
             }
             if (commandLine.hasOption("date")) {
                 String date = commandLine.getOptionValue("date");
-                result = currency + "\n" + RateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm);
+                result = currency + "\n" + rateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm);
             }
             if (commandLine.hasOption("period")) {
                 String periodStr = commandLine.getOptionValue("period");
                 Period period = parseCalculateType(periodStr);
                 if (commandLine.getOptionValue("output").equalsIgnoreCase("list")) {
-                    result += currency + "\n" + RateService.calculateRate(currencyString, period, algorithm) + "\n";
+                    result += currency + "\n" + rateService.calculateRate(currencyString, period, algorithm) + "\n";
                 } else if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
                     String colorCurrency = null;
                     switch (currencyString.name()) {
@@ -58,7 +60,7 @@ public class InWorkToScatter {
                         default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
 
                     }
-                    plt.plot().add(RateService.calculateRateGraph(currencyString, period, algorithm))
+                    plt.plot().add(rateService.calculateRateGraph(currencyString, period, algorithm))
                             .color(colorCurrency)
                             .linewidth(1.5)
                             .linestyle("-")
@@ -75,7 +77,7 @@ public class InWorkToScatter {
     }
 
 
-    public static void getPhoto(Plot plot) throws PythonExecutionException, IOException {
+    public void getPhoto(Plot plot) throws PythonExecutionException, IOException {
         Plot plt = plot;
         plt.legend();
         plt.savefig(PHOTO_PATH).dpi(200);
@@ -89,7 +91,7 @@ public class InWorkToScatter {
      * @param s Строка с валютой.
      * @return Адрес к БД.
      */
-    private static CurrencyFile parseCurrency(String s) {
+    private CurrencyFile parseCurrency(String s) {
         for (CurrencyFile currency : CurrencyFile.values()) {
             if (currency.name().equalsIgnoreCase(s)) {
                 return currency;
@@ -104,7 +106,7 @@ public class InWorkToScatter {
      * @param s Строка с периодом.
      * @return Период.
      */
-    private static Period parseCalculateType(String s) {
+    private Period parseCalculateType(String s) {
         for (Period calculateType : Period.values()) {
             if (calculateType.name().equalsIgnoreCase(s)) {
                 return calculateType;

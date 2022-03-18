@@ -47,7 +47,7 @@ public class ParserInput {
         return commandLine;
     }
 
-    public static Algorithm parseAlgorithm(String alg) {
+    public Algorithm parseAlgorithm(String alg) {
         Algorithm algorithm;
         switch (alg) {
             case "actual": algorithm =new ActualAlgorithm();
@@ -61,7 +61,7 @@ public class ParserInput {
         return algorithm;
     }
 
-    public static String[] parseCurrency(String currency) {
+    public String[] parseCurrency(String currency) {
         String[] currencyArray = currency.split (",");
         return currencyArray;
     }
