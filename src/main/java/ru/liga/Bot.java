@@ -14,12 +14,23 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
 
 @Log4j
 public class Bot extends TelegramLongPollingCommandBot {
     private static final String USERNAME = "GetExchangeRateForecast";
-    private static final String TOKEN = "5089571615:AAG3Hi1WZExIh1A7ljrmn60_lpGK8Vuhl5o";
+    private static String TOKEN;
 
+    public static void getTokenConfig() {
+        Properties properties = new Properties();
+        try {
+            properties.load(ExchangeRateForecast.class.getClassLoader().getResourceAsStream("config.properties"));
+            TOKEN = properties.getProperty("token");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String getBotUsername() {

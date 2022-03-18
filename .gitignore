@@ -3,4 +3,5 @@
 # Project exclude paths
 /target/
 /.idea/
-/ExchangeRateForecast.iml
+/src/main/resources/config.properties
+
