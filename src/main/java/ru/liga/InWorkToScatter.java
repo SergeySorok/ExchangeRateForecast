@@ -45,12 +45,18 @@ public class InWorkToScatter {
                 } else if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
                     String colorCurrency = null;
                     switch (currencyString.name()) {
-                        case "USD" -> colorCurrency = "blue";
-                        case "EUR" -> colorCurrency = "red";
-                        case "TRY" -> colorCurrency = "orange";
-                        case "AMD" -> colorCurrency = "purple";
-                        case "BGN" -> colorCurrency = "yellow";
-                        default -> throw new IllegalStateException("Unexpected value: " + currencyString.name());
+                        case "USD": colorCurrency = "blue";
+                        break;
+                        case "EUR": colorCurrency = "red";
+                        break;
+                        case "TRY": colorCurrency = "orange";
+                        break;
+                        case "AMD": colorCurrency = "purple";
+                        break;
+                        case "BGN": colorCurrency = "yellow";
+                        break;
+                        default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
+
                     }
                     plt.plot().add(RateService.calculateRateGraph(currencyString, period, algorithm))
                             .color(colorCurrency)

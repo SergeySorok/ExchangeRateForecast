@@ -18,7 +18,7 @@ import java.io.File;
 @Log4j
 public class Bot extends TelegramLongPollingCommandBot {
     private static final String USERNAME = "GetExchangeRateForecast";
-    private static final String TOKEN = "5089571615:AAFsuKo2jBbGR27jabgin-qXRU2iq0CdczI";
+    private static final String TOKEN = "5089571615:AAG3Hi1WZExIh1A7ljrmn60_lpGK8Vuhl5o";
 
 
     @Override

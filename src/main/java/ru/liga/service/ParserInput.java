@@ -48,11 +48,15 @@ public class ParserInput {
     }
 
     public static Algorithm parseAlgorithm(String alg) {
-        Algorithm algorithm = switch (alg) {
-            case "actual" -> new ActualAlgorithm();
-            case "mystic" -> new MysticAlgorithm();
-            case "linear_regression" -> new LinearRegression();
-            default -> throw new IllegalArgumentException("No such algorithm: [%s]".formatted(alg));
+        Algorithm algorithm;
+        switch (alg) {
+            case "actual": algorithm =new ActualAlgorithm();
+            break;
+            case "mystic": algorithm = new MysticAlgorithm();
+            break;
+            case "linear_regression": algorithm = new LinearRegression();
+            break;
+            default: throw new IllegalArgumentException("No such algorithm: [%s]" + alg);
         };
         return algorithm;
     }
