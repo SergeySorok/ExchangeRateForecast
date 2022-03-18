@@ -3,3 +3,4 @@
 # Project exclude paths
 /target/
 /.idea/
+/ExchangeRateForecast.iml
