@@ -21,16 +21,6 @@ public class Bot extends TelegramLongPollingCommandBot {
     private static final String TOKEN = "5089571615:AAFsuKo2jBbGR27jabgin-qXRU2iq0CdczI";
 
 
-    public static void main(String[] args) throws Exception {
-
-        try {
-            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-            botsApi.registerBot(new Bot());
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public String getBotUsername() {
         return USERNAME;
