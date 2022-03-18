@@ -6,7 +6,7 @@ import org.apache.commons.cli.CommandLine;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
-import ru.liga.service.MyPlot;
+import ru.liga.service.GraphFormation;
 import ru.liga.service.ParserInput;
 import ru.liga.service.RateService;
 
@@ -23,8 +23,8 @@ public class InWorkToScatter {
         CommandLine commandLine = ParserInput.parseCommand(args);
         String alg = commandLine.getOptionValue("alg");
         Algorithm algorithm = parserInput.parseAlgorithm(alg);
-
-        Plot plt = MyPlot.getPlot();
+        GraphFormation graphFormation = new GraphFormation();
+        Plot plt = graphFormation.getPlot();
 
         String result = "";
         String[] currencyArray = parserInput.parseCurrency(args[1]);
@@ -45,26 +45,8 @@ public class InWorkToScatter {
                 if (commandLine.getOptionValue("output").equalsIgnoreCase("list")) {
                     result += currency + "\n" + rateService.calculateRate(currencyString, period, algorithm) + "\n";
                 } else if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
-                    String colorCurrency = null;
-                    switch (currencyString.name()) {
-                        case "USD": colorCurrency = "blue";
-                        break;
-                        case "EUR": colorCurrency = "red";
-                        break;
-                        case "TRY": colorCurrency = "orange";
-                        break;
-                        case "AMD": colorCurrency = "purple";
-                        break;
-                        case "BGN": colorCurrency = "yellow";
-                        break;
-                        default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
-
-                    }
-                    plt.plot().add(rateService.calculateRateGraph(currencyString, period, algorithm))
-                            .color(colorCurrency)
-                            .linewidth(1.5)
-                            .linestyle("-")
-                            .label(currencyString.name());
+                    String colorCurrency = graphFormation.graphColor(currencyString);
+                    graphFormation.getGraphLine(plt, colorCurrency, currencyString, period, algorithm);
                 }
             }
         }
