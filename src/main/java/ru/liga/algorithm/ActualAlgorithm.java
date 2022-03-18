@@ -7,30 +7,34 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class ActualAlgorithm implements Algorithm {
+
     @Override
     public List<MyCurrency> calculate(List<MyCurrency> currencies, LocalDate date) {
-        if (currencies == null || currencies.isEmpty()) {
-            return null;
-        }
-        for (LocalDate pivot = currencies.get(0).getDate().plusDays(1); pivot.isBefore(date) || pivot.isEqual(date); pivot = pivot.plusDays(1)) {
-            if (pivot.plusYears(2).isBefore(date)) {
+
+        LocalDate currentKnownDateFromFile = currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL)
+                .getDate().plusDays(AlgorithmConstants.ONE_DAY);
+        int countDay = 0;
+        do {
+            countDay++;
+            currentKnownDateFromFile.plusDays(countDay);
+            if (currentKnownDateFromFile.plusYears(AlgorithmConstants.LATEST_FORECAST_DATE).isBefore(date)) {
                 throw new DateTimeException("Вы ввели слишком познюю дату: " + date);
             }
             MyCurrency nextCurrency = new MyCurrency();
-            nextCurrency.setNominalValue(currencies.get(0).getNominalValue());
-            nextCurrency.setDate(pivot);
-            LocalDate finalPivot = pivot;
+            nextCurrency.setNominalValue(currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL).getNominalValue());
+            nextCurrency.setDate(currentKnownDateFromFile);
+            LocalDate finalPivot = currentKnownDateFromFile;
             MyCurrency currency1 = currencies.stream()
-                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(2)))
+                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_2_YEARS)))
                     .findAny()
                     .get();
             MyCurrency currency2 = currencies.stream()
-                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(3)))
+                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_3_YEARS)))
                     .findAny()
                     .get();
             nextCurrency.setRate(currency1.getRate() / currency1.getNominalValue() + currency2.getRate() / currency2.getNominalValue());
             currencies.add(0, nextCurrency);
-        }
+        } while (currentKnownDateFromFile.isEqual(date));
         return currencies;
     }
 }

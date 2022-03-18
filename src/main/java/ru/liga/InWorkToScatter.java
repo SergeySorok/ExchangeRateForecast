@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static ru.liga.calculate.Period.parseCalculateType;
+
 
 public class InWorkToScatter {
     public static final String PHOTO_PATH = "src/main/resources/graph.png";
@@ -25,13 +27,13 @@ public class InWorkToScatter {
         Algorithm algorithm = parserInput.parseAlgorithm(alg);
         GraphFormation graphFormation = new GraphFormation();
         Plot plt = graphFormation.getPlot();
-
         String result = "";
-        String[] currencyArray = parserInput.parseCurrency(args[1]);
+
+        String[] currencyArray = CurrencyFile.parseCurrency(args[1]);
 
         RateService rateService = new RateService();
         for (String currency : currencyArray) {
-            CurrencyFile currencyString = parseCurrency(currency);
+            CurrencyFile currencyString = CurrencyFile.parseCurrencyType(currency);
             if (currency == null) {
                 return "Невозможно обработать валюту " + currencyString;
             }
@@ -59,42 +61,9 @@ public class InWorkToScatter {
     }
 
 
-    public void getPhoto(Plot plot) throws PythonExecutionException, IOException {
-        Plot plt = plot;
+    public void getPhoto(Plot plt) throws PythonExecutionException, IOException {
         plt.legend();
         plt.savefig(PHOTO_PATH).dpi(200);
         plt.executeSilently();
     }
-
-
-    /**
-     * Определеяет тип валюты и предоставляет строку с адресом к БД.
-     *
-     * @param s Строка с валютой.
-     * @return Адрес к БД.
-     */
-    private CurrencyFile parseCurrency(String s) {
-        for (CurrencyFile currency : CurrencyFile.values()) {
-            if (currency.name().equalsIgnoreCase(s)) {
-                return currency;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Определеяет период, на который необходимо предоставить информацию.
-     *
-     * @param s Строка с периодом.
-     * @return Период.
-     */
-    private Period parseCalculateType(String s) {
-        for (Period calculateType : Period.values()) {
-            if (calculateType.name().equalsIgnoreCase(s)) {
-                return calculateType;
-            }
-        }
-        return null;
-    }
-
 }

@@ -61,8 +61,4 @@ public class ParserInput {
         return algorithm;
     }
 
-    public String[] parseCurrency(String currency) {
-        String[] currencyArray = currency.split (",");
-        return currencyArray;
-    }
 }
