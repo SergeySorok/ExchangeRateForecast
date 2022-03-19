@@ -18,7 +18,7 @@ import static ru.liga.calculate.Period.parseCalculateType;
 
 
 public class InWorkToScatter {
-    public static final String PHOTO_PATH = "src/main/resources/graph.png";
+    public static final String PHOTO_PATH = "src/main/resources/graph.png"; //путь создания и чтения файла (графика)
 
     public String launch(String[] args) throws Exception {
         CommandLine commandLine = ParserInput.parseCommand(args);

@@ -8,35 +8,36 @@ import ru.liga.algorithm.MysticAlgorithm;
 
 public class ParserInput {
     public static CommandLine parseCommand(String[] args) {
+        CommandLine commandLine = null;
         Options options = new Options();
-        Option option1 = Option.builder("date")
+        Option dateOption = Option.builder("date")
                 .hasArg()
                 .argName("дата в формате DD.mm.yyyy")
                 .desc("Прогнозируемая дата")
                 .build();
-        Option option2 = Option.builder("period")
+        Option periodOption = Option.builder("period")
                 .hasArg()
                 .argName("запрашиваемый период")
                 .desc("week, month")
                 .build();
-        Option option3 = Option.builder("alg")
+        Option algorithmOption = Option.builder("alg")
                 .hasArg()
                 .argName("алгоритм")
                 .desc("actual, mystic, line_regression ")
                 .required()
                 .build();
-        Option option4 = Option.builder("output")
+        Option outputOption = Option.builder("output")
                 .hasArg()
                 .argName("output_type")
                 .desc("способ вывода данных: graph, list")
                 .build();
-        options.addOption(option1)
-                .addOption(option2)
-                .addOption(option3)
-                .addOption(option4);
+        options.addOption(dateOption)
+                .addOption(periodOption)
+                .addOption(algorithmOption)
+                .addOption(outputOption);
 
         DefaultParser defaultParser = new DefaultParser();
-        CommandLine commandLine = null;
+
         try {
             commandLine = defaultParser.parse(options, args);
         } catch (org.apache.commons.cli.ParseException e) {
