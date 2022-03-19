@@ -16,30 +16,14 @@ public class GraphFormation {
     }
 
     public String graphColor(CurrencyFile currencyFile) {
-        String colorCurrency = "";
-        try {
-            switch (currencyFile.name()) {
-                case "USD":
-                    colorCurrency = "blue";
-                    break;
-                case "EUR":
-                    colorCurrency = "red";
-                    break;
-                case "TRY":
-                    colorCurrency = "orange";
-                    break;
-                case "AMD":
-                    colorCurrency = "purple";
-                    break;
-                case "BGN":
-                    colorCurrency = "yellow";
-                    break;
-            }
-
-        } catch (Exception e) {
-            e.getMessage();
+        switch (currencyFile.name()) {
+            case "USD": return "blue";
+            case "EUR": return "red";
+            case "TRY": return "orange";
+            case "AMD": return "purple";
+            case "BGN": return "yellow";
+            default: throw new IllegalArgumentException("No such currencyColor: [%s]" + currencyFile);
         }
-        return colorCurrency;
     }
 
     public Plot getGraphLine(Plot plt, String colorCurrency, CurrencyFile currencyFile, Period period, Algorithm algorithm) {
@@ -51,6 +35,4 @@ public class GraphFormation {
                 .label(currencyFile.name());
         return plt;
     }
-
-
 }

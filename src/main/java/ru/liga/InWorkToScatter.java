@@ -18,47 +18,55 @@ import static ru.liga.calculate.Period.parseCalculateType;
 
 
 public class InWorkToScatter {
-    public static final String PHOTO_PATH = "src/main/resources/graph.png"; //путь создания и чтения файла (графика)
+    public static final String PHOTO_PATH = "photo_file/graph.png"; //путь создания и чтения файла (графика)
+    private static final String SPLIT_SEPARATOR = " ";
 
-    public String launch(String[] args) throws Exception {
-        CommandLine commandLine = ParserInput.parseCommand(args);
-        String alg = commandLine.getOptionValue("alg");
-        Algorithm algorithm = ParserInput.parseAlgorithm(alg);
-        GraphFormation graphFormation = new GraphFormation();
-        Plot plt = graphFormation.getPlot();
-        String result = "";
+    public String launch(String text) {
 
-        String[] currencyArray = CurrencyFile.parseCurrency(args[1]);
+        String[] args = text.split(SPLIT_SEPARATOR);
+        try {
+            CommandLine commandLine = ParserInput.parseCommand(args); // получать в Bot и передать в валидатор
+            String alg = commandLine.getOptionValue("alg");
+            Algorithm algorithm = ParserInput.parseAlgorithm(alg);
+            GraphFormation graphFormation = new GraphFormation();
+            Plot plt = graphFormation.getPlot();
+            String result = "";
 
-        RateService rateService = new RateService();
-        for (String currency : currencyArray) {
-            CurrencyFile currencyString = CurrencyFile.parseCurrencyType(currency);
-            if (currency == null) {
-                return "Невозможно обработать валюту " + currencyString;
-            }
-            if (commandLine.hasOption("date")) {
-                String date = commandLine.getOptionValue("date");
-                result = currency + "\n" + rateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm);
-            }
-            if (commandLine.hasOption("period")) {
-                String periodStr = commandLine.getOptionValue("period");
-                Period period = parseCalculateType(periodStr);
-                if (commandLine.getOptionValue("output").equalsIgnoreCase("list")) {
-                    result += currency + "\n" + rateService.calculateRate(currencyString, period, algorithm) + "\n";
-                } else if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
-                    String colorCurrency = graphFormation.graphColor(currencyString);
-                    graphFormation.getGraphLine(plt, colorCurrency, currencyString, period, algorithm);
+            String[] currencyArray = CurrencyFile.parseCurrency(args[1]);
+
+            RateService rateService = new RateService();
+            for (String currency : currencyArray) {
+                CurrencyFile currencyString = CurrencyFile.parseCurrencyType(currency);
+                if (currency == null) {
+                    return "Невозможно обработать валюту " + currencyString;
+                }
+                if (commandLine.hasOption("date")) {
+                    String date = commandLine.getOptionValue("date");
+                    result = currency + "\n" + rateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm);
+                }
+                if (commandLine.hasOption("period")) {
+                    String periodStr = commandLine.getOptionValue("period");
+                    Period period = parseCalculateType(periodStr);
+                    if (commandLine.getOptionValue("output").equalsIgnoreCase("list")) {
+                        result += currency + "\n" + rateService.calculateRate(currencyString, period, algorithm) + "\n";
+                    } else if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
+                        String colorCurrency = graphFormation.graphColor(currencyString);
+                        graphFormation.getGraphLine(plt, colorCurrency, currencyString, period, algorithm);
+                    }
                 }
             }
+            if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
+                getPhoto(plt);
+            } else {
+                return result;
+            }
+            return null;
+        } catch (Exception exception) {
+            return exception.getMessage();
         }
-        if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
-            getPhoto(plt);
-        } else {
-            return result;
-        }
-        return null;
     }
-    public void getPhoto(Plot plt) throws PythonExecutionException, IOException {
+
+    private void getPhoto(Plot plt) throws PythonExecutionException, IOException {
         plt.legend();
         plt.savefig(PHOTO_PATH).dpi(200);
         plt.executeSilently();

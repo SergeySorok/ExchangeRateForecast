@@ -6,9 +6,11 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
 
+import java.util.StringJoiner;
+
 public class ParserInput {
-    public static CommandLine parseCommand(String[] args) {
-        CommandLine commandLine = null;
+    public static CommandLine parseCommand(String[] args) throws ParseException {
+        boolean hasError = false;
         Options options = new Options();
         Option dateOption = Option.builder("date")
                 .hasArg()
@@ -38,28 +40,38 @@ public class ParserInput {
 
         DefaultParser defaultParser = new DefaultParser();
 
+        StringJoiner errorMessage = new StringJoiner("\n");
+
+        CommandLine commandLine = null;
         try {
             commandLine = defaultParser.parse(options, args);
-        } catch (org.apache.commons.cli.ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
-            HelpFormatter helpFormatter = new HelpFormatter();
-            helpFormatter.printHelp("ExchangeRateForecast", options);
+            hasError = true;
+            errorMessage.add(e.getMessage());
         }
+
+        for (Option o : options.getOptions()) {
+            if (commandLine.getOptionProperties(o).size() > 1) {
+                hasError = true;
+                errorMessage.add(String.format("Введена некорректно опция [%s]", o.getOpt()));
+            }
+        }
+
+        if (hasError) {
+            throw new ParseException(errorMessage.toString());
+        }
+
         return commandLine;
     }
 
     public static Algorithm parseAlgorithm(String alg) {
-        Algorithm algorithm;
         switch (alg) {
-            case "actual": algorithm = new ActualAlgorithm();
-            break;
-            case "mystic": algorithm = new MysticAlgorithm();
-            break;
-            case "linear_regression": algorithm = new LinearRegression();
-            break;
+            case "actual": return new ActualAlgorithm();
+            case "mystic": return new MysticAlgorithm();
+            case "linear_regression": return new LinearRegression();
             default: throw new IllegalArgumentException("No such algorithm: [%s]" + alg);
-        };
-        return algorithm;
+        }
     }
 
 }

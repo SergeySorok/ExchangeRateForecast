@@ -10,31 +10,27 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
 @Log4j
 public class Bot extends TelegramLongPollingCommandBot {
+    private static final String OUTPUT_GRAPH_COMMAND = "graph";
     private String USERNAME;
     private String TOKEN;
 
-    private static final String SPLIT_SEPARATOR = " ";
-    private static final String OUTPUT_GRAPH_COMMAND = "graph";
-
     public Bot() {
-            Properties properties = new Properties();
-            try {
-                properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
-                TOKEN = properties.getProperty("token");
-                USERNAME = properties.getProperty("botName");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Properties properties = new Properties();
+        try {
+            properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
+            TOKEN = properties.getProperty("token");
+            USERNAME = properties.getProperty("botName");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
-
 
     @Override
     public void processNonCommandUpdate(Update update) {
@@ -42,31 +38,21 @@ public class Bot extends TelegramLongPollingCommandBot {
         Long chatId = msg.getChatId();
         User user = msg.getFrom();
         String text = msg.getText();
+        String userName = (user.getUserName() != null) ? user.getUserName() :
+                String.format("%s %s", user.getLastName(), user.getFirstName());
 
-        String[] args = text.split(SPLIT_SEPARATOR);
         String reply;
         InWorkToScatter inWorkToScatter = new InWorkToScatter();
-        try {
-            if (text.contains(OUTPUT_GRAPH_COMMAND)) {
-                reply = inWorkToScatter.launch(args);
-                SendPhoto sendPhoto = new SendPhoto();
-                File file = new File(InWorkToScatter.PHOTO_PATH);
-                InputFile inputFile = new InputFile(file);
-                sendPhoto.setPhoto(inputFile);
-                sendPhoto.setChatId(chatId.toString());
-                String userName = (user.getUserName() != null) ? user.getUserName() :
-                        String.format("%s %s", user.getLastName(), user.getFirstName());
-                sendMessageToChat(chatId, userName, file);
-
-            } else {
-                reply = inWorkToScatter.launch(args);
-            }
-            String userName = (user.getUserName() != null) ? user.getUserName() :
-                    String.format("%s %s", user.getLastName(), user.getFirstName());
-            sendMessageToChat(chatId, userName, reply);
-        } catch (Exception e) {
-            log.fatal(e);
+        reply = inWorkToScatter.launch(text);
+        if (text.contains(OUTPUT_GRAPH_COMMAND)) {
+            SendPhoto sendPhoto = new SendPhoto();
+            File file = new File(InWorkToScatter.PHOTO_PATH);
+            InputFile inputFile = new InputFile(file);
+            sendPhoto.setPhoto(inputFile);
+            sendPhoto.setChatId(chatId.toString());
+            sendMessageToChat(chatId, userName, file);
         }
+        sendMessageToChat(chatId, userName, reply);
     }
 
     private void sendMessageToChat(Long chatId, String userName, String text) {
