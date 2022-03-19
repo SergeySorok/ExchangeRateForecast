@@ -17,8 +17,20 @@ import java.util.Properties;
 
 @Log4j
 public class Bot extends TelegramLongPollingCommandBot {
-    private static final String USERNAME = "GetExchangeRateForecast";
-    private static String TOKEN;
+    private String USERNAME;
+    private String TOKEN;
+
+    public Bot() {
+            Properties properties = new Properties();
+            try {
+                properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
+                TOKEN = properties.getProperty("token");
+                USERNAME = properties.getProperty("botName");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+    }
 
 
     @Override
@@ -78,15 +90,6 @@ public class Bot extends TelegramLongPollingCommandBot {
                     userName));
             e.printStackTrace();
 
-        }
-    }
-    public static void getTokenConfig() {
-        Properties properties = new Properties();
-        try {
-            properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
-            TOKEN = properties.getProperty("token");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
