@@ -31,7 +31,9 @@ public class CurrenciesDAO {
                     LocalDate date = LocalDate.parse(x[1], DATE_FORMAT);
                     myCurrency.setDate(date);
                     try {
-                        double rate = NumberFormat.getInstance(new Locale("RU")).parse(x[2].replace("\"", "")).doubleValue();
+                        double rate = NumberFormat.getInstance(new Locale("RU"))
+                                .parse(x[2].replace("\"", ""))
+                                .doubleValue();
                         myCurrency.setRate(rate);
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -42,14 +44,6 @@ public class CurrenciesDAO {
         return listParse;
     }
 
-    /**
-     * На основании актуализации информации из БД формирует лист с курсами с определенным в параметрах
-     * количеством записей.
-     *
-     * @param date    Период прогноза.
-     * @param currencyFile Путь к БД.
-     * @return Лист с прогнозируемым курсом.
-     */
     public List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) {
         List<MyCurrency> listParse = getActualCurrencies(currencyFile);
         algorithm.calculate(listParse, date);

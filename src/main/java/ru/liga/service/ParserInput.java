@@ -50,7 +50,7 @@ public class ParserInput {
     public static Algorithm parseAlgorithm(String alg) {
         Algorithm algorithm;
         switch (alg) {
-            case "actual": algorithm =new ActualAlgorithm();
+            case "actual": algorithm = new ActualAlgorithm();
             break;
             case "mystic": algorithm = new MysticAlgorithm();
             break;

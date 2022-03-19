@@ -34,7 +34,6 @@ public class RateService {
         for (int i = period.getCalculationPeriod() - 1; i >= 0; i--) {
             doubleList.add(currencies.get(i).getRate());
         }
-
         return doubleList;
     }
 

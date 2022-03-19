@@ -35,7 +35,6 @@ public class GraphFormation {
                     colorCurrency = "yellow";
                     break;
             }
-            //     default: throw new IllegalStateException("Unexpected value: " + currencyString.name());
 
         } catch (Exception e) {
             e.getMessage();
