@@ -20,6 +20,9 @@ public class Bot extends TelegramLongPollingCommandBot {
     private String USERNAME;
     private String TOKEN;
 
+    private static final String SPLIT_SEPARATOR = " ";
+    private static final String OUTPUT_GRAPH_COMMAND = "graph";
+
     public Bot() {
             Properties properties = new Properties();
             try {
@@ -40,11 +43,11 @@ public class Bot extends TelegramLongPollingCommandBot {
         User user = msg.getFrom();
         String text = msg.getText();
 
-        String[] args = text.split(" ");
+        String[] args = text.split(SPLIT_SEPARATOR);
         String reply;
         InWorkToScatter inWorkToScatter = new InWorkToScatter();
         try {
-            if (text.contains("graph")) {
+            if (text.contains(OUTPUT_GRAPH_COMMAND)) {
                 reply = inWorkToScatter.launch(args);
                 SendPhoto sendPhoto = new SendPhoto();
                 File file = new File(InWorkToScatter.PHOTO_PATH);
