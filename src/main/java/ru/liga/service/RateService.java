@@ -6,6 +6,7 @@ import ru.liga.currency.CurrencyFile;
 import ru.liga.dao.CurrenciesDAO;
 import ru.liga.dao.MyCurrency;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -14,9 +15,9 @@ import java.util.List;
 public class RateService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
-    CurrenciesDAO currenciesDAO = new CurrenciesDAO();
+    private CurrenciesDAO currenciesDAO = new CurrenciesDAO();
 
-    public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
+    public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) throws IOException {
         StringBuilder result = new StringBuilder();
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
         List<MyCurrency> currencies = currenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
@@ -27,7 +28,8 @@ public class RateService {
         return result.toString();
     }
 
-    public List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) {
+    public List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) throws IOException {
+        CurrenciesDAO currenciesDAO = new CurrenciesDAO();
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
         List<MyCurrency> currencies = currenciesDAO.getPrognosisCurrencies(currency, toDate, algorithm);
         List<Double> doubleList = new ArrayList<>();
@@ -37,7 +39,8 @@ public class RateService {
         return doubleList;
     }
 
-    public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) {
+    public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) throws IOException {
+        CurrenciesDAO currenciesDAO = new CurrenciesDAO();
         List<MyCurrency> rate = currenciesDAO.getPrognosisCurrencies(currency, date, algorithm);
         return String.format("%s - %.2f", rate.get(0).getDate().format(DATE_FORMAT), rate.get(0).getRate());
     }

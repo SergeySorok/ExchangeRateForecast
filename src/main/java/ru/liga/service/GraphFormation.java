@@ -5,6 +5,8 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
 
+import java.io.IOException;
+
 public class GraphFormation {
 
     public Plot getPlot() {
@@ -26,7 +28,7 @@ public class GraphFormation {
         }
     }
 
-    public Plot getGraphLine(Plot plt, String colorCurrency, CurrencyFile currencyFile, Period period, Algorithm algorithm) {
+    public Plot getGraphLine(Plot plt, String colorCurrency, CurrencyFile currencyFile, Period period, Algorithm algorithm) throws IOException {
         RateService rateService = new RateService();
         plt.plot().add(rateService.calculateRateGraph(currencyFile, period, algorithm))
                 .color(colorCurrency)
