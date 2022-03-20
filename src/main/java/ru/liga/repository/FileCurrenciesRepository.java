@@ -1,4 +1,4 @@
-package ru.liga.dao;
+package ru.liga.repository;
 
 import ru.liga.algorithm.Algorithm;
 import ru.liga.currency.CurrencyFile;
@@ -15,7 +15,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 
-public class CurrenciesDAO {
+public class FileCurrenciesRepository implements CurrencyRepository {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final String SEPARATOR_COLUMN_NAME = ";";
@@ -23,8 +23,9 @@ public class CurrenciesDAO {
     private static int date_Column;
     private static int rate_Column;
 
-    private List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) throws IOException {
-        var stream = CurrenciesDAO.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
+    @Override
+    public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) throws IOException {
+        var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
         var reader = new BufferedReader(new InputStreamReader(stream));
         setColumnIndex(reader);
         List<MyCurrency> listParse = reader.lines()
@@ -43,6 +44,7 @@ public class CurrenciesDAO {
         return listParse;
     }
 
+    @Override
     public List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) throws IOException {
         List<MyCurrency> listParse = getActualCurrencies(currencyFile);
         algorithm.calculate(listParse, date);
@@ -71,8 +73,6 @@ public class CurrenciesDAO {
             if (listColumnName[i].equalsIgnoreCase("curs")) {
                 rate_Column = i;
             }
-
         }
     }
-
 }
