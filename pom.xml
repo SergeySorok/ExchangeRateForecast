@@ -95,7 +95,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>ru.liga.InWorkToScatter</mainClass>
+              <mainClass>ru.liga.CommandProcessingLogic</mainClass>
             </manifest>
           </archive>
           <!--Ignoring postfix jar-with-dependencies-->

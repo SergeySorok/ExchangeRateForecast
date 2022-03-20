@@ -42,11 +42,11 @@ public class Bot extends TelegramLongPollingCommandBot {
                 String.format("%s %s", user.getLastName(), user.getFirstName());
 
         String reply;
-        InWorkToScatter inWorkToScatter = new InWorkToScatter();
-        reply = inWorkToScatter.launch(text);
+        CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
+        reply = commandProcessingLogic.launch(text);
         if (text.contains(OUTPUT_GRAPH_COMMAND)) {
             SendPhoto sendPhoto = new SendPhoto();
-            File file = new File(InWorkToScatter.PHOTO_PATH);
+            File file = new File(CommandProcessingLogic.PHOTO_PATH);
             InputFile inputFile = new InputFile(file);
             sendPhoto.setPhoto(inputFile);
             sendPhoto.setChatId(chatId.toString());
@@ -55,7 +55,7 @@ public class Bot extends TelegramLongPollingCommandBot {
         sendMessageToChat(chatId, userName, reply);
     }
 
-    private void sendMessageToChat(Long chatId, String userName, String text) {
+    public void sendMessageToChat(Long chatId, String userName, String text) {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());

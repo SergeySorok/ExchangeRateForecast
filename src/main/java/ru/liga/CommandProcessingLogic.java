@@ -15,11 +15,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static ru.liga.calculate.Period.parseCalculateType;
+import static ru.liga.service.ParserInput.parseCurrenciesIndex;
 
 
-public class InWorkToScatter {
+public class CommandProcessingLogic {
     public static final String PHOTO_PATH = "photo_file/graph.png"; //путь создания и чтения файла (графика)
     private static final String SPLIT_SEPARATOR = " ";
+    private static int currenciesIndex;
 
     public String launch(String text) {
 
@@ -32,9 +34,11 @@ public class InWorkToScatter {
             Plot plt = graphFormation.getPlot();
             String result = "";
 
-            String[] currencyArray = CurrencyFile.parseCurrency(args[1]);
+            currenciesIndex = parseCurrenciesIndex(args);
+            String[] currencyArray = CurrencyFile.parseCurrency(args[currenciesIndex]);
 
             RateService rateService = new RateService();
+
             for (String currency : currencyArray) {
                 CurrencyFile currencyString = CurrencyFile.parseCurrencyType(currency);
                 if (currency == null) {
@@ -43,8 +47,7 @@ public class InWorkToScatter {
                 if (commandLine.hasOption("date")) {
                     String date = commandLine.getOptionValue("date");
                     result = currency + "\n" + rateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm);
-                }
-                if (commandLine.hasOption("period")) {
+                } else if (commandLine.hasOption("period")) {
                     String periodStr = commandLine.getOptionValue("period");
                     Period period = parseCalculateType(periodStr);
                     if (commandLine.getOptionValue("output").equalsIgnoreCase("list")) {
@@ -58,12 +61,13 @@ public class InWorkToScatter {
             if (commandLine.getOptionValue("output").equalsIgnoreCase("graph")) {
                 getPhoto(plt);
             } else {
-                return result;
+                return "Введенная команда некорректна. Пожалуйста, введите корректную команду";
             }
-            return null;
+
         } catch (Exception exception) {
             return exception.getMessage();
         }
+        return null;
     }
 
     private void getPhoto(Plot plt) throws PythonExecutionException, IOException {

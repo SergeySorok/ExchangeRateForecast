@@ -5,6 +5,8 @@ import ru.liga.algorithm.ActualAlgorithm;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
+import ru.liga.currency.CurrencyFile;
+import ru.liga.exceptions.CommandNotFoundExceptions;
 
 import java.util.StringJoiner;
 
@@ -67,11 +69,33 @@ public class ParserInput {
 
     public static Algorithm parseAlgorithm(String alg) {
         switch (alg) {
-            case "actual": return new ActualAlgorithm();
-            case "mystic": return new MysticAlgorithm();
-            case "linear_regression": return new LinearRegression();
-            default: throw new IllegalArgumentException("No such algorithm: [%s]" + alg);
+            case "actual":
+                return new ActualAlgorithm();
+            case "mystic":
+                return new MysticAlgorithm();
+            case "linear_regression":
+                return new LinearRegression();
+            default:
+                throw new IllegalArgumentException("No such algorithm: [%s]" + alg);
         }
     }
 
+    public static int parseCurrenciesIndex(String[] args) {
+        StringJoiner errorMessage = new StringJoiner("\n");
+        int indexCurrencies = -1;
+
+        for (int i = 0; i < args.length; i++) {
+            for (CurrencyFile currency : CurrencyFile.values()) {
+                if (args[i].replace(' ', '0').indexOf(currency.name()) != -1) {
+                    indexCurrencies = i;
+                    break;
+                }
+            }
+        }
+        if (indexCurrencies < 0) {
+            errorMessage.add(String.format("Не указана валюта"));
+            throw new RuntimeException();
+        }
+        return indexCurrencies;
+    }
 }
