@@ -17,6 +17,7 @@ public class RateService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
     private CurrencyRepository currencyRepository = new FileCurrenciesRepository();
+    private static final int LATEST_CURRENT_LINE = 0;
 
     public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) throws IOException {
         StringBuilder result = new StringBuilder();
@@ -43,7 +44,7 @@ public class RateService {
     public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) throws IOException {
         FileCurrenciesRepository fileCurrenciesRepository = new FileCurrenciesRepository();
         List<MyCurrency> rate = fileCurrenciesRepository.getPrognosisCurrencies(currency, date, algorithm);
-        return String.format("%s - %.2f", rate.get(0).getDate().format(DATE_FORMAT), rate.get(0).getRate());
+        return String.format("%s - %.2f", rate.get(LATEST_CURRENT_LINE).getDate().format(DATE_FORMAT), rate.get(LATEST_CURRENT_LINE).getRate());
     }
 }
 

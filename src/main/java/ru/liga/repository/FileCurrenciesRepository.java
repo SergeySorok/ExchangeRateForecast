@@ -19,6 +19,9 @@ public class FileCurrenciesRepository implements CurrencyRepository {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final String SEPARATOR_COLUMN_NAME = ";";
+    private static final String NOMINAL_COLUMN_NAME = "nominal";
+    private static final String DATE_COLUMN_NAME = "data";
+    private static final String CURS_COLUMN_NAME = "curs";
     private static int nominal_Column;
     private static int date_Column;
     private static int rate_Column;
@@ -64,13 +67,13 @@ public class FileCurrenciesRepository implements CurrencyRepository {
     private void setColumnIndex(BufferedReader bufferedReader) throws IOException {
         String[] listColumnName = bufferedReader.readLine().split(SEPARATOR_COLUMN_NAME);
         for (int i = 0; i < listColumnName.length; i++) {
-            if (listColumnName[i].equalsIgnoreCase("nominal")) {
+            if (listColumnName[i].equalsIgnoreCase(NOMINAL_COLUMN_NAME)) {
                 nominal_Column = i;
             }
-            if (listColumnName[i].equalsIgnoreCase("data")) {
+            if (listColumnName[i].equalsIgnoreCase(DATE_COLUMN_NAME)) {
                 date_Column = i;
             }
-            if (listColumnName[i].equalsIgnoreCase("curs")) {
+            if (listColumnName[i].equalsIgnoreCase(CURS_COLUMN_NAME)) {
                 rate_Column = i;
             }
         }

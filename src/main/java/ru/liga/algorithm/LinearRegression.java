@@ -9,20 +9,21 @@ public class LinearRegression implements Algorithm {
     public final int DAYS_EXTRAPALATION = 30;
 
     public List<MyCurrency> calculate(List<MyCurrency> currencies, LocalDate date) {
-        if (currencies == null || currencies.isEmpty()) {
-            return null;
-        }
 
         PreLinearRegression preLinearRegression = getPreLinearRegression(currencies, DAYS_EXTRAPALATION);
         int countDays = DAYS_EXTRAPALATION + 1;
-        for (LocalDate pivot = currencies.get(0).getDate().plusDays(1); pivot.isBefore(date) || pivot.isEqual(date); pivot = pivot.plusDays(1)) {
+        LocalDate currentKnownDateFromFile = currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL)
+                .getDate().plusDays(AlgorithmConstants.ONE_DAY);
+        do {
             MyCurrency nextCurrency = new MyCurrency();
             nextCurrency.setNominalValue(currencies.get(0).getNominalValue());
-            nextCurrency.setDate(pivot);
+            nextCurrency.setDate(currentKnownDateFromFile);
             nextCurrency.setRate(preLinearRegression.predict(countDays) / nextCurrency.getNominalValue());
             countDays++;
             currencies.add(0, nextCurrency);
-        }
+            currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
+        } while (currentKnownDateFromFile.isEqual(date));
+
         return currencies;
     }
 

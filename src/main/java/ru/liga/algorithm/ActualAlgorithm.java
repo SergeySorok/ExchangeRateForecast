@@ -13,12 +13,9 @@ public class ActualAlgorithm implements Algorithm {
 
         LocalDate currentKnownDateFromFile = currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL)
                 .getDate().plusDays(AlgorithmConstants.ONE_DAY);
-        int countDay = 0;
         do {
-            countDay++;
-            currentKnownDateFromFile.plusDays(countDay);
             if (currentKnownDateFromFile.plusYears(AlgorithmConstants.LATEST_FORECAST_DATE).isBefore(date)) {
-                throw new DateTimeException("Вы ввели слишком познюю дату: " + date);
+                throw new DateTimeException(AlgorithmConstants.ERROR_DATE_MESSAGE + date);
             }
             MyCurrency nextCurrency = new MyCurrency();
             nextCurrency.setNominalValue(currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL).getNominalValue());
@@ -34,6 +31,7 @@ public class ActualAlgorithm implements Algorithm {
                     .get();
             nextCurrency.setRate(currency1.getRate() / currency1.getNominalValue() + currency2.getRate() / currency2.getNominalValue());
             currencies.add(0, nextCurrency);
+            currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
         } while (currentKnownDateFromFile.isEqual(date));
         return currencies;
     }

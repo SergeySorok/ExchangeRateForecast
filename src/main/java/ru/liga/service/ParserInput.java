@@ -6,7 +6,6 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
 import ru.liga.currency.CurrencyFile;
-import ru.liga.exceptions.CommandNotFoundExceptions;
 
 import java.util.StringJoiner;
 
