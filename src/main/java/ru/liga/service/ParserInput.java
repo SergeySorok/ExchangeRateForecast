@@ -15,7 +15,7 @@ public class ParserInput {
         Options options = new Options();
         Option dateOption = Option.builder("date")
                 .hasArg()
-                .argName("дата в формате DD.mm.yyyy")
+                .argName("дата в формате dd.MM.yyyy")
                 .desc("Прогнозируемая дата")
                 .build();
         Option periodOption = Option.builder("period")

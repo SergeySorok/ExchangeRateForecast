@@ -28,22 +28,26 @@ public class FileCurrenciesRepository implements CurrencyRepository {
 
     @Override
     public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) throws IOException {
-        var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
-        var reader = new BufferedReader(new InputStreamReader(stream));
-        setColumnIndex(reader);
-        List<MyCurrency> listParse = reader.lines()
-                .skip(1)
-                .map(s -> s.split(";"))
-                .map(x -> {
-                    MyCurrency myCurrency = new MyCurrency();
-                    myCurrency.setNominalValue(Double.parseDouble(x[nominal_Column]));
-                    LocalDate date = LocalDate.parse(x[date_Column], DATE_FORMAT);
-                    myCurrency.setDate(date);
-                    double rate = parseRate(x);
-                    myCurrency.setRate(rate);
-                    return myCurrency;
-                })
-                .collect(Collectors.toList());
+        List<MyCurrency> listParse = null;
+        try {
+            var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
+            var reader = new BufferedReader(new InputStreamReader(stream));
+            setColumnIndex(reader);
+            listParse = reader.lines()
+                    .map(s -> s.split(";"))
+                    .map(x -> {
+                        MyCurrency myCurrency = new MyCurrency();
+                        myCurrency.setNominalValue(Double.parseDouble(x[nominal_Column]));
+                        LocalDate date = LocalDate.parse(x[date_Column], DATE_FORMAT);
+                        myCurrency.setDate(date);
+                        double rate = parseRate(x);
+                        myCurrency.setRate(rate);
+                        return myCurrency;
+                    })
+                    .collect(Collectors.toList());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
         return listParse;
     }
 
@@ -60,7 +64,9 @@ public class FileCurrenciesRepository implements CurrencyRepository {
             rate = NumberFormat.getInstance(new Locale("RU"))
                     .parse(x[rate_Column].replace("\"", ""))
                     .doubleValue();
-        } catch (ParseException e) {e.printStackTrace();}
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return rate;
     }
 

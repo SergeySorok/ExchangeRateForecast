@@ -6,10 +6,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class MysticAlgorithm implements Algorithm {
-    //курсы трех последних дат полнолуний 16.02.2022, 18.01.2022, 19.12.2021
-    private static final LocalDate date1 = LocalDate.parse("2022-02-16");
-    private static final LocalDate date2 = LocalDate.parse("2022-01-18");
-    private static final LocalDate date3 = LocalDate.parse("2021-12-19");
+    private static final LocalDate FULL_MOON_DATE_NUMBER_ONE = LocalDate.parse("2022-02-16");
+    private static final LocalDate FULL_MOON_DATE_NUMBER_TWO = LocalDate.parse("2022-01-18");
+    private static final LocalDate FULL_MOON_DATE_NUMBER_THREE = LocalDate.parse("2021-12-19");
     private static final int INTEREST_FOR_CALCULATION = 10;
 
     @Override
@@ -38,21 +37,21 @@ public class MysticAlgorithm implements Algorithm {
 
     private double parseNewMoonExchangeRate(List<MyCurrency> currencies) {
 
-        MyCurrency myCurrency1 = getForDate(currencies, date1);
-        MyCurrency myCurrency2 = getForDate(currencies, date2);
-        MyCurrency myCurrency3 = getForDate(currencies, date3);
+        MyCurrency getCurrencyFullMoonDateNumberOne = getForDate(currencies, FULL_MOON_DATE_NUMBER_ONE);
+        MyCurrency getCurrencyFullMoonDateNumberTwo = getForDate(currencies, FULL_MOON_DATE_NUMBER_TWO);
+        MyCurrency getCurrencyFullMoonDateNumberThree = getForDate(currencies, FULL_MOON_DATE_NUMBER_THREE);
 
-        double d = ((myCurrency1.getRate() + myCurrency2.getRate() + myCurrency3.getRate()) / 3) / currencies.get(0).getNominalValue();
+        double d = ((getCurrencyFullMoonDateNumberOne.getRate() + getCurrencyFullMoonDateNumberTwo.getRate() + getCurrencyFullMoonDateNumberThree.getRate()) / 3) / currencies.get(0).getNominalValue();
 
         return d;
     }
 
     private MyCurrency getForDate(List<MyCurrency> currencies, LocalDate date) {
-        MyCurrency myCurrency1 = currencies.stream()
+        MyCurrency currency = currencies.stream()
                 .dropWhile(x -> x.getDate().isAfter(date))
                 .findFirst()
-                .get();
-        return myCurrency1;
+                .orElseThrow();
+        return currency;
     }
 }
 
