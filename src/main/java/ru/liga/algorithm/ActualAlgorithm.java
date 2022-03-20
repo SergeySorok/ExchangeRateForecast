@@ -21,15 +21,15 @@ public class ActualAlgorithm implements Algorithm {
             nextCurrency.setNominalValue(currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL).getNominalValue());
             nextCurrency.setDate(currentKnownDateFromFile);
             LocalDate finalPivot = currentKnownDateFromFile;
-            MyCurrency currency1 = currencies.stream()
+            MyCurrency currencyAsOfDateMinusTwoYears = currencies.stream()
                     .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_2_YEARS)))
-                    .findAny()
-                    .get();
-            MyCurrency currency2 = currencies.stream()
+                    .findFirst()
+                    .orElseThrow();
+            MyCurrency currencyAsOfDateMinusThreeYears = currencies.stream()
                     .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_3_YEARS)))
-                    .findAny()
-                    .get();
-            nextCurrency.setRate(currency1.getRate() / currency1.getNominalValue() + currency2.getRate() / currency2.getNominalValue());
+                    .findFirst()
+                    .orElseThrow();
+            nextCurrency.setRate(currencyAsOfDateMinusTwoYears.getRate() / currencyAsOfDateMinusTwoYears.getNominalValue() + currencyAsOfDateMinusThreeYears.getRate() / currencyAsOfDateMinusThreeYears.getNominalValue());
             currencies.add(0, nextCurrency);
             currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
         } while (currentKnownDateFromFile.isEqual(date));
