@@ -49,22 +49,22 @@ public class Bot extends TelegramLongPollingCommandBot {
             CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text);
             Validate validate = new Validate();
             validate.generalValidateCommand(commandLine);
+            CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
+            String reply = commandProcessingLogic.launch(text);
+            if (text.contains(OUTPUT_GRAPH_COMMAND)) {
+                SendPhoto sendPhoto = new SendPhoto();
+                File file = new File(CommandProcessingLogic.PHOTO_PATH);
+                InputFile inputFile = new InputFile(file);
+                sendPhoto.setPhoto(inputFile);
+                sendPhoto.setChatId(chatId.toString());
+                sendMessageToChat(chatId, userName, file);
+            }
+            sendMessageToChat(chatId, userName, reply);
         } catch (ParseException | CommandLineException e) {
             sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
         }
 
-        String reply;
-        CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
-        reply = commandProcessingLogic.launch(text);
-        if (text.contains(OUTPUT_GRAPH_COMMAND)) {
-            SendPhoto sendPhoto = new SendPhoto();
-            File file = new File(CommandProcessingLogic.PHOTO_PATH);
-            InputFile inputFile = new InputFile(file);
-            sendPhoto.setPhoto(inputFile);
-            sendPhoto.setChatId(chatId.toString());
-            sendMessageToChat(chatId, userName, file);
-        }
-        sendMessageToChat(chatId, userName, reply);
+
     }
 
     public void sendMessageToChat(Long chatId, String userName, String text) {
