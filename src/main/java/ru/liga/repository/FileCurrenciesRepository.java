@@ -27,7 +27,7 @@ public class FileCurrenciesRepository implements CurrencyRepository {
     private static int rate_Column;
 
     @Override
-    public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) throws IOException {
+    public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) {
         List<MyCurrency> listParse = null;
         try {
             var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
@@ -47,12 +47,14 @@ public class FileCurrenciesRepository implements CurrencyRepository {
                     .collect(Collectors.toList());
         } catch (RuntimeException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return listParse;
     }
 
     @Override
-    public List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) throws IOException {
+    public List<MyCurrency> getPrognosisCurrencies(CurrencyFile currencyFile, LocalDate date, Algorithm algorithm) {
         List<MyCurrency> listParse = getActualCurrencies(currencyFile);
         algorithm.calculate(listParse, date);
         return listParse;

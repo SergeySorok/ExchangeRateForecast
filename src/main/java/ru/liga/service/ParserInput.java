@@ -10,11 +10,8 @@ import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
 import ru.liga.currency.CurrencyFile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.StringJoiner;
-import java.util.stream.Collectors;
 
 public class ParserInput {
     private static final String SPLIT_SEPARATOR = " ";

@@ -1,8 +1,6 @@
 package ru.liga.exception;
 
-import lombok.Getter;
-
-public class CommandLineException extends RuntimeException{
+public class CommandLineException extends RuntimeException {
     public CommandLineException() {
 
     }

@@ -2,6 +2,7 @@ package ru.liga.validate;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
+import ru.liga.currency.CurrencyFile;
 import ru.liga.exception.CommandLineException;
 import ru.liga.service.ParserInput;
 
@@ -152,7 +153,7 @@ public class ValidateCommand {
             throw new CommandLineException();
         }
         String currencies = args[ParserInput.parseCurrenciesIndex(args)];
-        if (currencies.contains(",,")) {
+        if (currencies.contains(",,") || !currencies.contains(Arrays.toString(CurrencyFile.values()))) {
             throw new CommandLineException();
         }
         String[] currenciesArray = currencies.split(",");

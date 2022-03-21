@@ -1,6 +1,7 @@
 package ru.liga.service;
 
 import com.github.sh0nk.matplotlib4j.Plot;
+import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
@@ -15,6 +16,8 @@ public class GraphFormation {
     private static final String YELLOW_COLOR_GRAPH_LINE = "yellow";
     private static final double LINE_WIDTH_GRAPH = 1.5;
     private static final String LINE_STYLE_GRAPH = "-";
+    public static final String PHOTO_PATH = "photo_file/graph.png"; //путь создания и чтения файла (графика)
+    private static final int PHOTO_SIZE = 200;
 
     public Plot getPlot() {
         Plot plt = Plot.create();
@@ -44,4 +47,11 @@ public class GraphFormation {
                 .label(currencyFile.name());
         return plt;
     }
+
+    public void getPhoto(Plot plt) throws PythonExecutionException, IOException {
+        plt.legend();
+        plt.savefig(PHOTO_PATH).dpi(PHOTO_SIZE);
+        plt.executeSilently();
+    }
+
 }

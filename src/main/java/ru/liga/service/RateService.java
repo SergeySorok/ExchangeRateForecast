@@ -41,7 +41,7 @@ public class RateService {
         return doubleList;
     }
 
-    public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) throws IOException {
+    public String calculateRate(CurrencyFile currency, LocalDate date, Algorithm algorithm) {
         FileCurrenciesRepository fileCurrenciesRepository = new FileCurrenciesRepository();
         List<MyCurrency> rate = fileCurrenciesRepository.getPrognosisCurrencies(currency, date, algorithm);
         return String.format("%s - %.2f", rate.get(LATEST_CURRENT_LINE).getDate().format(DATE_FORMAT), rate.get(LATEST_CURRENT_LINE).getRate());
