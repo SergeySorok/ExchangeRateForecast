@@ -1,15 +1,17 @@
-package ru.liga;
+package ru.liga.bot;
 
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.cli.CommandLine;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
+import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.*;
+import org.telegram.telegrambots.meta.bots.AbsSender;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.liga.CommandProcessingLogic;
+import ru.liga.Main;
 import ru.liga.command.OptionCommand;
 import ru.liga.exception.CommandLineException;
 import ru.liga.service.GraphFormation;
@@ -27,6 +29,8 @@ public class Bot extends TelegramLongPollingCommandBot {
     private String TOKEN;
 
     public Bot() {
+        register(new StartCommand("start", "Старт"));
+
         Properties properties = new Properties();
         try {
             properties.load(Main.class.getClassLoader().getResourceAsStream("config.properties"));
@@ -37,14 +41,14 @@ public class Bot extends TelegramLongPollingCommandBot {
         }
     }
 
+
     @Override
     public void processNonCommandUpdate(Update update) {
         Message msg = update.getMessage();
         Long chatId = msg.getChatId();
         User user = msg.getFrom();
         String text = msg.getText();
-        String userName = (user.getUserName() != null) ? user.getUserName() :
-                String.format("%s %s", user.getLastName(), user.getFirstName());
+        String userName = getUserName(user);
         try {
             CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text);
             Validator.generalValidateCommand(commandLine);
@@ -58,6 +62,11 @@ public class Bot extends TelegramLongPollingCommandBot {
         } catch (CommandLineException e) {
             sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
         }
+    }
+
+    public static String getUserName(User user) {
+        return (user.getUserName() != null) ? user.getUserName() :
+                String.format("%s %s", user.getLastName(), user.getFirstName());
     }
 
 
