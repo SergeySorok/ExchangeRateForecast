@@ -1,6 +1,9 @@
 package ru.liga.service;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import ru.liga.algorithm.ActualAlgorithm;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
@@ -10,58 +13,14 @@ import ru.liga.currency.CurrencyFile;
 import java.util.StringJoiner;
 
 public class ParserInput {
-    public static CommandLine parseCommand(String[] args) throws ParseException {
-        boolean hasError = false;
-        Options options = new Options();
-        Option dateOption = Option.builder("date")
-                .hasArg()
-                .argName("дата в формате dd.MM.yyyy")
-                .desc("Прогнозируемая дата")
-                .build();
-        Option periodOption = Option.builder("period")
-                .hasArg()
-                .argName("запрашиваемый период")
-                .desc("week, month")
-                .build();
-        Option algorithmOption = Option.builder("alg")
-                .hasArg()
-                .argName("алгоритм")
-                .desc("actual, mystic, line_regression ")
-                .required()
-                .build();
-        Option outputOption = Option.builder("output")
-                .hasArg()
-                .argName("output_type")
-                .desc("способ вывода данных: graph, list")
-                .build();
-        options.addOption(dateOption)
-                .addOption(periodOption)
-                .addOption(algorithmOption)
-                .addOption(outputOption);
+    private static final String SPLIT_SEPARATOR = " ";
 
+    public static CommandLine parseCommand(Options options, String text) throws ParseException {
         DefaultParser defaultParser = new DefaultParser();
-
-        StringJoiner errorMessage = new StringJoiner("\n");
-
+        String[] args = text.split(SPLIT_SEPARATOR);
         CommandLine commandLine = null;
-        try {
-            commandLine = defaultParser.parse(options, args);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            hasError = true;
-            errorMessage.add(e.getMessage());
-        }
 
-        for (Option o : options.getOptions()) {
-            if (commandLine.getOptionProperties(o).size() > 1) {
-                hasError = true;
-                errorMessage.add(String.format("Введена некорректно опция [%s]", o.getOpt()));
-            }
-        }
-
-        if (hasError) {
-            throw new ParseException(errorMessage.toString());
-        }
+        commandLine = defaultParser.parse(options, args);
 
         return commandLine;
     }
@@ -85,7 +44,7 @@ public class ParserInput {
 
         for (int i = 0; i < args.length; i++) {
             for (CurrencyFile currency : CurrencyFile.values()) {
-                if (args[i].replace(' ', '0').indexOf(currency.name()) != -1) {
+                if (args[i].replace(' ', '0').contains(currency.name())) {
                     indexCurrencies = i;
                     break;
                 }

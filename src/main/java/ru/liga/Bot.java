@@ -1,6 +1,8 @@
 package ru.liga;
 
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.ParseException;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -9,6 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.liga.command.OptionCommand;
+import ru.liga.exception.CommandLineException;
+import ru.liga.service.ParserInput;
+import ru.liga.validate.Validate;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +35,6 @@ public class Bot extends TelegramLongPollingCommandBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -40,6 +45,14 @@ public class Bot extends TelegramLongPollingCommandBot {
         String text = msg.getText();
         String userName = (user.getUserName() != null) ? user.getUserName() :
                 String.format("%s %s", user.getLastName(), user.getFirstName());
+        try {
+            CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text);
+            Validate validate = new Validate();
+            validate.generalValidateCommand(commandLine);
+            validate.generalValidateText(text);
+        } catch (ParseException | CommandLineException e) {
+            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), e.getMessage());
+        }
 
         String reply;
         CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();

@@ -5,6 +5,7 @@ import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import org.apache.commons.cli.CommandLine;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
+import ru.liga.command.OptionCommand;
 import ru.liga.currency.CurrencyFile;
 import ru.liga.service.GraphFormation;
 import ru.liga.service.ParserInput;
@@ -37,7 +38,7 @@ public class CommandProcessingLogic {
         String[] args = text.split(SPLIT_SEPARATOR);
         StringBuilder result = new StringBuilder();
         try {
-            CommandLine commandLine = ParserInput.parseCommand(args); // получать в Bot и передать в валидатор
+            CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text); // получать в Bot и передать в валидатор
             String alg = commandLine.getOptionValue(ALGORITHM_COMMAND);
             Algorithm algorithm = ParserInput.parseAlgorithm(alg);
             GraphFormation graphFormation = new GraphFormation();
