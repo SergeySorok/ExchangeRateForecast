@@ -26,9 +26,8 @@ public class ParserInput {
                 .filter(x -> !x.equals(""))
                 .filter(x -> !x.equals(","))
                 .toArray(String[]::new);
-        CommandLine commandLine = null;
-        commandLine = defaultParser.parse(options, argsAfterFilter);
-        return commandLine;
+
+        return defaultParser.parse(options, argsAfterFilter);
     }
 
     public static Algorithm parseAlgorithm(String alg) {

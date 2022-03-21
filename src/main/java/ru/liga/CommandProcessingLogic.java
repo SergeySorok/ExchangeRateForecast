@@ -25,15 +25,17 @@ public class CommandProcessingLogic {
     private static final String LINE_BREAK = "\n";
     private static final int PHOTO_SIZE = 200;
     private static final String DATE_COMMAND = "date";
+    private static final String DATE_COMMAND_TOMORROW = "tomorrow";
     private static final String PERIOD_COMMAND = "period";
     private static final String OUTPUT_COMMAND = "output";
     private static final String OUTPUT_COMMAND_GRAPH = "graph";
     private static final String OUTPUT_COMMAND_LIST = "list";
     private static final String ALGORITHM_COMMAND = "alg";
     private static final String ERROR_CURRENCY_MESSAGE = "Невозможно обработать валюту ";
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 
-    public String launch(String text) {
+    public String launch(String text) throws ClassCastException {
 
         String[] args = text.split(SPLIT_SEPARATOR);
         StringBuilder result = new StringBuilder();
@@ -55,7 +57,12 @@ public class CommandProcessingLogic {
                     return ERROR_CURRENCY_MESSAGE + currencyString;
                 }
                 if (commandLine.hasOption(DATE_COMMAND)) {
-                    String date = commandLine.getOptionValue(DATE_COMMAND);
+                    String date;
+                    if (commandLine.getOptionValue(DATE_COMMAND).equalsIgnoreCase(DATE_COMMAND_TOMORROW)) {
+                        date = LocalDate.now().plusDays(Period.TOMORROW.getCalculationPeriod()).format(DATE_FORMAT);
+                    } else {
+                        date = commandLine.getOptionValue(DATE_COMMAND);
+                    }
                     result.append(currency + LINE_BREAK + rateService.calculateRate(currencyString, LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")), algorithm));
                 } else if (commandLine.hasOption(PERIOD_COMMAND)) {
                     String periodStr = commandLine.getOptionValue(PERIOD_COMMAND);

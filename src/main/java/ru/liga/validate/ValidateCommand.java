@@ -56,8 +56,9 @@ public class ValidateCommand {
                 count++;
             }
         }
-        if (count != 2) {
+        if (count == 1) {
             throw new CommandLineException();
+
         }
     }
 
@@ -77,7 +78,7 @@ public class ValidateCommand {
         DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         for (Option option : commandLine.getOptions()) {
             if (option.getOpt().equalsIgnoreCase("date")) {
-                if(option.getValue().equalsIgnoreCase("tomorrow")) {
+                if (option.getValue().equalsIgnoreCase("tomorrow")) {
                     return;
                 }
                 if (option.getValue() == null) {
@@ -119,7 +120,7 @@ public class ValidateCommand {
                     throw new CommandLineException();
                 }
                 if (option.getValue().equalsIgnoreCase("actual") || option.getValue().equalsIgnoreCase("mystic")
-                || option.getValue().equalsIgnoreCase("linear_regression")) {
+                        || option.getValue().equalsIgnoreCase("linear_regression")) {
                     return;
                 } else {
                     throw new CommandLineException();
@@ -147,7 +148,7 @@ public class ValidateCommand {
     public void currenciesValidate(CommandLine commandLine) throws CommandLineException {
         String[] args = Arrays.stream(commandLine.getArgs())
                 .toArray(String[]::new);
-        if (args[ARRAY_ELEMENT_WITH_RATE].equalsIgnoreCase(RATE_COMMAND)) {
+        if (!args[ARRAY_ELEMENT_WITH_RATE].equalsIgnoreCase(RATE_COMMAND)) {
             throw new CommandLineException();
         }
         String currencies = args[ParserInput.parseCurrenciesIndex(args)];
