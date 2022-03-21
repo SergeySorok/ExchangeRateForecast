@@ -15,11 +15,6 @@ public class Validate {
         validateCommand.invalidDate(commandLine);
         validateCommand.invalidOutput(commandLine);
         validateCommand.invalidPeriod(commandLine);
-    }
-
-    public void generalValidateText(String text) {
-        ValidateText validateText = new ValidateText();
-        validateText.currenciesValidate(text);
-        validateText.rateValidate(text);
+        validateCommand.currenciesValidate(commandLine);
     }
 }

@@ -49,9 +49,8 @@ public class Bot extends TelegramLongPollingCommandBot {
             CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text);
             Validate validate = new Validate();
             validate.generalValidateCommand(commandLine);
-            validate.generalValidateText(text);
         } catch (ParseException | CommandLineException e) {
-            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), e.getMessage());
+            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
         }
 
         String reply;

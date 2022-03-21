@@ -3,11 +3,16 @@ package ru.liga.validate;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
 import ru.liga.exception.CommandLineException;
+import ru.liga.service.ParserInput;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class ValidateCommand {
+    private static final int MAX_CURRENCIES_SIZE = 5;
+    private static final int ARRAY_ELEMENT_WITH_RATE = 0;
+    private static final String RATE_COMMAND = "rate";
 
     public void commandDuplicate(CommandLine commandLine) throws CommandLineException {
         for (Option option : commandLine.getOptions()) {
@@ -133,6 +138,35 @@ public class ValidateCommand {
                     return;
                 } else {
                     throw new CommandLineException();
+                }
+            }
+        }
+    }
+
+
+    public void currenciesValidate(CommandLine commandLine) throws CommandLineException {
+        String[] args = Arrays.stream(commandLine.getArgs())
+                .toArray(String[]::new);
+        if (args[ARRAY_ELEMENT_WITH_RATE].equalsIgnoreCase(RATE_COMMAND)) {
+            throw new CommandLineException();
+        }
+        String currencies = args[ParserInput.parseCurrenciesIndex(args)];
+        if (currencies.contains(",,")) {
+            throw new CommandLineException();
+        }
+        String[] currenciesArray = currencies.split(",");
+        if (currenciesArray.length > MAX_CURRENCIES_SIZE) {
+            throw new CommandLineException();
+        }
+        int countDuplicate;
+        for (String currency : currenciesArray) {
+            countDuplicate = 0;
+            for (int i = 0; i < currenciesArray.length; i++) {
+                if (currency.equals(currenciesArray[i])) {
+                    countDuplicate++;
+                    if (countDuplicate > 1) {
+                        throw new CommandLineException();
+                    }
                 }
             }
         }

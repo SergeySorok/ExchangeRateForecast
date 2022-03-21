@@ -10,7 +10,11 @@ import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
 import ru.liga.currency.CurrencyFile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class ParserInput {
     private static final String SPLIT_SEPARATOR = " ";
@@ -18,10 +22,12 @@ public class ParserInput {
     public static CommandLine parseCommand(Options options, String text) throws ParseException {
         DefaultParser defaultParser = new DefaultParser();
         String[] args = text.split(SPLIT_SEPARATOR);
+        String[] argsAfterFilter = Arrays.stream(args)
+                .filter(x -> !x.equals(""))
+                .filter(x -> !x.equals(","))
+                .toArray(String[]::new);
         CommandLine commandLine = null;
-
-        commandLine = defaultParser.parse(options, args);
-
+        commandLine = defaultParser.parse(options, argsAfterFilter);
         return commandLine;
     }
 
