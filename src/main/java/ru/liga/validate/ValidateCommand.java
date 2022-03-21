@@ -9,6 +9,8 @@ import ru.liga.service.ParserInput;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ValidateCommand {
     private static final int MAX_CURRENCIES_SIZE = 5;
@@ -153,23 +155,19 @@ public class ValidateCommand {
             throw new CommandLineException();
         }
         String currencies = args[ParserInput.parseCurrenciesIndex(args)];
-        if (currencies.contains(",,") || !currencies.contains(Arrays.toString(CurrencyFile.values()))) {
+        String[] currenciesArray = currencies.split(",+");
+        List<String> currenciesString = Arrays.asList(currenciesArray);
+        List<String> uniqueCurrencies = currenciesString.stream()
+                .distinct()
+                .collect(Collectors.toList());
+        if (uniqueCurrencies.size() > MAX_CURRENCIES_SIZE || uniqueCurrencies.size() != currenciesString.size()) {
             throw new CommandLineException();
         }
-        String[] currenciesArray = currencies.split(",");
-        if (currenciesArray.length > MAX_CURRENCIES_SIZE) {
-            throw new CommandLineException();
-        }
-        int countDuplicate;
-        for (String currency : currenciesArray) {
-            countDuplicate = 0;
-            for (int i = 0; i < currenciesArray.length; i++) {
-                if (currency.equals(currenciesArray[i])) {
-                    countDuplicate++;
-                    if (countDuplicate > 1) {
-                        throw new CommandLineException();
-                    }
-                }
+        for (String uniqueCurrency : uniqueCurrencies) {
+            try {
+                CurrencyFile.valueOf(uniqueCurrency);
+            } catch (IllegalArgumentException e) {
+                throw new CommandLineException();
             }
         }
     }

@@ -1,10 +1,12 @@
 package ru.liga.validate;
 
 import org.apache.commons.cli.CommandLine;
-import ru.liga.exception.CommandLineException;
 
-public class Validate {
-    public void generalValidateCommand(CommandLine commandLine) throws CommandLineException {
+public class Validator {
+    private Validator() {
+    }
+
+    public static void generalValidateCommand(CommandLine commandLine) {
         ValidateCommand validateCommand = new ValidateCommand();
         validateCommand.commandDuplicate(commandLine);
         validateCommand.emptyGroupCommands(commandLine);

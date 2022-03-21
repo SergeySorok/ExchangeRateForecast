@@ -9,6 +9,7 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
 import ru.liga.currency.CurrencyFile;
+import ru.liga.exception.CommandLineException;
 
 import java.util.Arrays;
 import java.util.StringJoiner;
@@ -16,7 +17,7 @@ import java.util.StringJoiner;
 public class ParserInput {
     private static final String SPLIT_SEPARATOR = " ";
 
-    public static CommandLine parseCommand(Options options, String text) throws ParseException {
+    public static CommandLine parseCommand(Options options, String text) {
         DefaultParser defaultParser = new DefaultParser();
         String[] args = text.split(SPLIT_SEPARATOR);
         String[] argsAfterFilter = Arrays.stream(args)
@@ -24,7 +25,11 @@ public class ParserInput {
                 .filter(x -> !x.equals(","))
                 .toArray(String[]::new);
 
-        return defaultParser.parse(options, argsAfterFilter);
+        try {
+            return defaultParser.parse(options, argsAfterFilter);
+        } catch (ParseException e) {
+            throw new CommandLineException();
+        }
     }
 
     public static Algorithm parseAlgorithm(String alg) {

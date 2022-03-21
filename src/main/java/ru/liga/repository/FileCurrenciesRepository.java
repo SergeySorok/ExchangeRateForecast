@@ -29,9 +29,8 @@ public class FileCurrenciesRepository implements CurrencyRepository {
     @Override
     public List<MyCurrency> getActualCurrencies(CurrencyFile currencyFile) {
         List<MyCurrency> listParse = null;
-        try {
-            var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
-            var reader = new BufferedReader(new InputStreamReader(stream));
+        try (var stream = FileCurrenciesRepository.class.getClassLoader().getResourceAsStream(currencyFile.getFilename());
+             var reader = new BufferedReader(new InputStreamReader(stream));) {
             setColumnIndex(reader);
             listParse = reader.lines()
                     .map(s -> s.split(";"))
@@ -45,9 +44,7 @@ public class FileCurrenciesRepository implements CurrencyRepository {
                         return myCurrency;
                     })
                     .collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        }  catch (IOException e) {
             e.printStackTrace();
         }
         return listParse;

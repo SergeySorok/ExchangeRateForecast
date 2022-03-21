@@ -19,7 +19,7 @@ public class RateService {
     private CurrencyRepository currencyRepository = new FileCurrenciesRepository();
     private static final int LATEST_CURRENT_LINE = 0;
 
-    public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) throws IOException {
+    public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
         StringBuilder result = new StringBuilder();
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
         List<MyCurrency> currencies = currencyRepository.getPrognosisCurrencies(currency, toDate, algorithm);
@@ -30,7 +30,7 @@ public class RateService {
         return result.toString();
     }
 
-    public List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) throws IOException {
+    public List<Double> calculateRateGraph(CurrencyFile currency, Period period, Algorithm algorithm) {
         FileCurrenciesRepository fileCurrenciesRepository = new FileCurrenciesRepository();
         LocalDate toDate = LocalDate.now().plusDays(period.getCalculationPeriod());
         List<MyCurrency> currencies = fileCurrenciesRepository.getPrognosisCurrencies(currency, toDate, algorithm);

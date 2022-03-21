@@ -24,8 +24,7 @@ public class CommandProcessingLogic {
     private static final String ALGORITHM_COMMAND = "alg";
 
 
-    public String commandImplementation(CommandLine commandLine)
-            throws ClassCastException, IOException, PythonExecutionException {
+    public String commandExecutor(CommandLine commandLine) {
 
         String[] args = Arrays.stream(commandLine.getArgs()).toArray(String[]::new);
         Algorithm algorithm = ParserInput.parseAlgorithm(commandLine.getOptionValue(ALGORITHM_COMMAND));

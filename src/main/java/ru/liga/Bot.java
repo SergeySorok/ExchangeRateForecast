@@ -1,9 +1,7 @@
 package ru.liga;
 
-import com.github.sh0nk.matplotlib4j.PythonExecutionException;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -16,7 +14,7 @@ import ru.liga.command.OptionCommand;
 import ru.liga.exception.CommandLineException;
 import ru.liga.service.GraphFormation;
 import ru.liga.service.ParserInput;
-import ru.liga.validate.Validate;
+import ru.liga.validate.Validator;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,40 +47,41 @@ public class Bot extends TelegramLongPollingCommandBot {
                 String.format("%s %s", user.getLastName(), user.getFirstName());
         try {
             CommandLine commandLine = ParserInput.parseCommand(OptionCommand.getOptions(), text);
-            Validate validate = new Validate();
-            validate.generalValidateCommand(commandLine);
+            Validator.generalValidateCommand(commandLine);
             CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
-            String reply = commandProcessingLogic.commandImplementation(commandLine);
+            String reply = commandProcessingLogic.commandExecutor(commandLine);
             if (text.contains(OUTPUT_GRAPH_COMMAND)) {
-                SendPhoto sendPhoto = new SendPhoto();
                 File file = new File(GraphFormation.PHOTO_PATH);
-                InputFile inputFile = new InputFile(file);
-                sendPhoto.setPhoto(inputFile);
-                sendPhoto.setChatId(chatId.toString());
                 sendMessageToChat(chatId, userName, file);
             }
             sendMessageToChat(chatId, userName, reply);
-        } catch (CommandLineException | ParseException | IOException | PythonExecutionException | TelegramApiException e) {
-            try {
-                sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
-            } catch (TelegramApiException ex) {
-                ex.printStackTrace();
-            }
+        } catch (CommandLineException e) {
+            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
         }
     }
 
-    public void sendMessageToChat(Long chatId, String userName, String text) throws TelegramApiException {
+
+
+    public void sendMessageToChat(Long chatId, String userName, String text) {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
-        execute(answer);
+        try {
+            execute(answer);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void sendMessageToChat(Long chatId, String userName, File photo) throws TelegramApiException {
+    private void sendMessageToChat(Long chatId, String userName, File photo) {
         SendPhoto answer = new SendPhoto();
         answer.setChatId(chatId.toString());
         answer.setPhoto(new InputFile(photo));
-        execute(answer);
+        try {
+            execute(answer);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
     }
 
 

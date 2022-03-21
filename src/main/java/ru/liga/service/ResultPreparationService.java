@@ -35,7 +35,7 @@ public class ResultPreparationService {
     }
 
     public static StringBuilder ResultPreparationPeriod
-            (CommandLine commandLine, String currency, CurrencyFile currencyString, Algorithm algorithm) throws IOException {
+            (CommandLine commandLine, String currency, CurrencyFile currencyString, Algorithm algorithm) {
 
         RateService rateService = new RateService();
         String periodStr = commandLine.getOptionValue(PERIOD_COMMAND);

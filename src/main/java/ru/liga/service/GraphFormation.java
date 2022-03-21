@@ -38,7 +38,7 @@ public class GraphFormation {
         }
     }
 
-    public Plot getGraphLine(Plot plt, String colorCurrency, CurrencyFile currencyFile, Period period, Algorithm algorithm) throws IOException {
+    public Plot getGraphLine(Plot plt, String colorCurrency, CurrencyFile currencyFile, Period period, Algorithm algorithm) {
         RateService rateService = new RateService();
         plt.plot().add(rateService.calculateRateGraph(currencyFile, period, algorithm))
                 .color(colorCurrency)
@@ -48,10 +48,14 @@ public class GraphFormation {
         return plt;
     }
 
-    public void getPhoto(Plot plt) throws PythonExecutionException, IOException {
+    public void getPhoto(Plot plt) {
         plt.legend();
         plt.savefig(PHOTO_PATH).dpi(PHOTO_SIZE);
-        plt.executeSilently();
+        try {
+            plt.executeSilently();
+        } catch (IOException | PythonExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
 }
