@@ -60,7 +60,7 @@ public class Bot extends TelegramLongPollingCommandBot {
             }
             sendMessageToChat(chatId, userName, reply);
         } catch (CommandLineException e) {
-            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), "Вы ввели некорректную команду ");
+            sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), e.getMessage());
         }
     }
 

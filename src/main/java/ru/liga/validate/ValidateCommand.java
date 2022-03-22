@@ -20,7 +20,7 @@ public class ValidateCommand {
     public void commandDuplicate(CommandLine commandLine) throws CommandLineException {
         for (Option option : commandLine.getOptions()) {
             if (commandLine.getOptionProperties(option).size() > 1) {
-                throw new CommandLineException();
+                throw new CommandLineException("Дублирование команд. Пожалуйста, введите команду корректно");
             }
         }
     }
@@ -33,7 +33,7 @@ public class ValidateCommand {
                 count++;
         }
         if (count > 1) {
-            throw new CommandLineException();
+            throw new CommandLineException("Невозможно использовать команду output совместно с командой date. Пожалуйста, введите команду корректно");
 
         }
     }
@@ -46,7 +46,7 @@ public class ValidateCommand {
                 count++;
         }
         if (count != 1) {
-            throw new CommandLineException();
+            throw new CommandLineException("Невозможно использовать команду date совместно с командой period. Пожалуйста, введите команду корректно");
 
         }
     }
@@ -60,7 +60,7 @@ public class ValidateCommand {
             }
         }
         if (count == 1) {
-            throw new CommandLineException();
+            throw new CommandLineException("Невозможно использовать команду period без выбора команды output (list/graph). Пожалуйста, введите команду корректно");
 
         }
     }
@@ -73,7 +73,7 @@ public class ValidateCommand {
             }
         }
         if (count != 1) {
-            throw new CommandLineException();
+            throw new CommandLineException("Вы не ввели команду alg. Пожалуйста, введите команду корректно");
         }
     }
 
@@ -85,16 +85,16 @@ public class ValidateCommand {
                     return;
                 }
                 if (option.getValue() == null) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Значение команды date некорректно. Пожалуйста, введите команду корректно");
                 }
                 LocalDate localDate;
                 try {
                     localDate = LocalDate.parse(option.getValue(), dateFormat);
                 } catch (CommandLineException e) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Некорректный формат введенной даты. Необходимый формат dd.MM.yyyy. Пожалуйста, введите команду корректно");
                 }
                 if (localDate.isBefore(LocalDate.now().plusDays(1))) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Введенная дата некорретна. Запрашиваемая дата должна быть от завтрашнего дня и позднее. Пожалуйста, введите команду корректно");
 
                 }
             }
@@ -105,12 +105,12 @@ public class ValidateCommand {
         for (Option option : commandLine.getOptions()) {
             if (option.getOpt().equalsIgnoreCase("period")) {
                 if (option.getValue() == null) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Не указано значение period. Пожалуйста, введите команду корректно");
                 }
                 if (option.getValue().equalsIgnoreCase("week") || option.getValue().equalsIgnoreCase("month")) {
                     return;
                 } else {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Указанное значение команды period некорректно. Вы можете выбрать week или month. Пожалуйста, введите команду корректно");
                 }
             }
         }
@@ -120,13 +120,13 @@ public class ValidateCommand {
         for (Option option : commandLine.getOptions()) {
             if (option.getOpt().equalsIgnoreCase("alg")) {
                 if (option.getValue() == null) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Значение команды alg неуказанно. Вы можете выбрать actual, mystic или linear_regression. Пожалуйста, введите команду корректно");
                 }
                 if (option.getValue().equalsIgnoreCase("actual") || option.getValue().equalsIgnoreCase("mystic")
                         || option.getValue().equalsIgnoreCase("linear_regression")) {
                     return;
                 } else {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Указанное значение команды alg некорректно. Вы можете выбрать week или month. Пожалуйста, введите команду корректно");
                 }
             }
         }
@@ -136,12 +136,12 @@ public class ValidateCommand {
         for (Option option : commandLine.getOptions()) {
             if (option.getOpt().equalsIgnoreCase("output")) {
                 if (option.getValue() == null) {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Значение команды output неуказанно. Вы можете выбрать list или output. Пожалуйста, введите команду корректно");
                 }
                 if (option.getValue().equalsIgnoreCase("list") || option.getValue().equalsIgnoreCase("graph")) {
                     return;
                 } else {
-                    throw new CommandLineException();
+                    throw new CommandLineException("Указанное значение команды output некорректно. Вы можете выбрать week или month. Пожалуйста, введите команду корректно");
                 }
             }
         }
@@ -152,7 +152,7 @@ public class ValidateCommand {
         String[] args = Arrays.stream(commandLine.getArgs())
                 .toArray(String[]::new);
         if (!args[ARRAY_ELEMENT_WITH_RATE].equalsIgnoreCase(RATE_COMMAND)) {
-            throw new CommandLineException();
+            throw new CommandLineException("Команда rate введена не корректно");
         }
         String currencies = args[ParserInput.parseCurrenciesIndex(args)];
         String[] currenciesArray = currencies.split(",+");
@@ -161,13 +161,13 @@ public class ValidateCommand {
                 .distinct()
                 .collect(Collectors.toList());
         if (uniqueCurrencies.size() > MAX_CURRENCIES_SIZE || uniqueCurrencies.size() != currenciesString.size()) {
-            throw new CommandLineException();
+            throw new CommandLineException("Валюта введена некорректно");
         }
         for (String uniqueCurrency : uniqueCurrencies) {
             try {
                 CurrencyFile.valueOf(uniqueCurrency);
             } catch (IllegalArgumentException e) {
-                throw new CommandLineException();
+                throw new CommandLineException("Валюта введена некорректно");
             }
         }
     }

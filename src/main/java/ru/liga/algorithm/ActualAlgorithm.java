@@ -1,5 +1,6 @@
 package ru.liga.algorithm;
 
+import ru.liga.exception.CommandLineException;
 import ru.liga.repository.MyCurrency;
 
 import java.time.DateTimeException;
@@ -15,7 +16,7 @@ public class ActualAlgorithm implements Algorithm {
                 .getDate().plusDays(AlgorithmConstants.ONE_DAY);
         do {
             if (currentKnownDateFromFile.plusYears(AlgorithmConstants.LATEST_FORECAST_DATE).isBefore(date)) {
-                throw new DateTimeException(AlgorithmConstants.ERROR_DATE_MESSAGE + date);
+                throw new CommandLineException("Вы ввели слишком позднюю дату. Дата не может превышать 2 лех от настоящей");
             }
             MyCurrency nextCurrency = new MyCurrency();
             nextCurrency.setNominalValue(currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL).getNominalValue());
@@ -32,7 +33,7 @@ public class ActualAlgorithm implements Algorithm {
             nextCurrency.setRate(currencyAsOfDateMinusTwoYears.getRate() / currencyAsOfDateMinusTwoYears.getNominalValue() + currencyAsOfDateMinusThreeYears.getRate() / currencyAsOfDateMinusThreeYears.getNominalValue());
             currencies.add(0, nextCurrency);
             currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
-        } while (currentKnownDateFromFile.isEqual(date));
+        } while (!currentKnownDateFromFile.isEqual(date));
         return currencies;
     }
 }

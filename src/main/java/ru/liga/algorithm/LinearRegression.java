@@ -22,7 +22,7 @@ public class LinearRegression implements Algorithm {
             countDays++;
             currencies.add(0, nextCurrency);
             currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
-        } while (currentKnownDateFromFile.isEqual(date));
+        } while (!currentKnownDateFromFile.isEqual(date));
 
         return currencies;
     }

@@ -30,7 +30,7 @@ public class MysticAlgorithm implements Algorithm {
             doubleRate = nextCurrency.getRate();
             currencies.add(0, nextCurrency);
             currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
-        } while (currentKnownDateFromFile.isEqual(date));
+        } while (!currentKnownDateFromFile.isEqual(date));
 
         return currencies;
     }

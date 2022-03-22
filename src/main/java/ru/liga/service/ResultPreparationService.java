@@ -30,7 +30,7 @@ public class ResultPreparationService {
         }
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String calculateRate = rateService.calculateRate(currencyString, localDate, algorithm);
-        result.append(currency + LINE_BREAK + calculateRate);
+        result.append(currency + LINE_BREAK + calculateRate + LINE_BREAK + LINE_BREAK);
         return result;
     }
 
