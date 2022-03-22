@@ -3,12 +3,12 @@ package ru.liga.bot;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.cli.CommandLine;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
-import org.telegram.telegrambots.extensions.bots.commandbot.commands.BotCommand;
-import org.telegram.telegrambots.extensions.bots.commandbot.commands.IBotCommand;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.*;
-import org.telegram.telegrambots.meta.bots.AbsSender;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.CommandProcessingLogic;
 import ru.liga.Main;
@@ -25,6 +25,7 @@ import java.util.Properties;
 @Log4j
 public class Bot extends TelegramLongPollingCommandBot {
     private static final String OUTPUT_GRAPH_COMMAND = "graph";
+    private static final String OUTPUT_GRAPH_COMMAND_MESSAGE = "Выше представлен график с прогнозируемым курсом валют";
     private String USERNAME;
     private String TOKEN;
 
@@ -41,6 +42,10 @@ public class Bot extends TelegramLongPollingCommandBot {
         }
     }
 
+    public static String getUserName(User user) {
+        return (user.getUserName() != null) ? user.getUserName() :
+                String.format("%s %s", user.getLastName(), user.getFirstName());
+    }
 
     @Override
     public void processNonCommandUpdate(Update update) {
@@ -55,7 +60,7 @@ public class Bot extends TelegramLongPollingCommandBot {
             CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
             String reply = commandProcessingLogic.commandExecutor(commandLine);
             if (text.contains(OUTPUT_GRAPH_COMMAND)) {
-                reply = "Выше представлен график с прогнозом курсом валют";
+                reply = OUTPUT_GRAPH_COMMAND_MESSAGE;
                 File file = new File(GraphFormation.PHOTO_PATH);
                 sendMessageToChat(chatId, userName, file);
             }
@@ -64,13 +69,6 @@ public class Bot extends TelegramLongPollingCommandBot {
             sendMessageToChat(msg.getChatId(), msg.getFrom().getUserName(), e.getMessage());
         }
     }
-
-    public static String getUserName(User user) {
-        return (user.getUserName() != null) ? user.getUserName() :
-                String.format("%s %s", user.getLastName(), user.getFirstName());
-    }
-
-
 
     public void sendMessageToChat(Long chatId, String userName, String text) {
         SendMessage answer = new SendMessage();

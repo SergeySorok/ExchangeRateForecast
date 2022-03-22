@@ -1,14 +1,12 @@
 package ru.liga.service;
 
-import com.github.sh0nk.matplotlib4j.Plot;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
+import ru.liga.repository.CurrencyRepository;
 import ru.liga.repository.FileCurrenciesRepository;
 import ru.liga.repository.MyCurrency;
-import ru.liga.repository.CurrencyRepository;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -17,8 +15,8 @@ import java.util.List;
 public class RateService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("EE dd.MM.yyyy");
-    private CurrencyRepository currencyRepository = new FileCurrenciesRepository();
     private static final int LATEST_CURRENT_LINE = 0;
+    private final CurrencyRepository currencyRepository = new FileCurrenciesRepository();
 
     public String calculateRate(CurrencyFile currency, Period period, Algorithm algorithm) {
         StringBuilder result = new StringBuilder();

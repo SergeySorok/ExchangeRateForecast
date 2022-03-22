@@ -16,7 +16,7 @@ public class GraphFormation {
     private static final String YELLOW_COLOR_GRAPH_LINE = "yellow";
     private static final double LINE_WIDTH_GRAPH = 1.5;
     private static final String LINE_STYLE_GRAPH = "-";
-    public static final String PHOTO_PATH = "photo_file/graph.png"; //путь создания и чтения файла (графика)
+    public static final String PHOTO_PATH = "src/main/resources/graph.png"; //путь создания и чтения файла (графика)
     private static final int PHOTO_SIZE = 200;
 
     public Plot getPlot() {

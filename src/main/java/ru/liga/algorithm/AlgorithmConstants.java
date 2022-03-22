@@ -6,5 +6,5 @@ public class AlgorithmConstants {
     static final int DATE_FOR_FORECAST_2_YEARS = 2;
     static final int DATE_FOR_FORECAST_3_YEARS = 3;
     static final int LATEST_FORECAST_DATE = 2;
-    static final String ERROR_DATE_MESSAGE = "Вы ввели слишком познюю дату: ";
+    static final String ERROR_DATE_MESSAGE = "Вы ввели слишком позднюю дату. Дата не может превышать 2 лех от настоящей";
 }
