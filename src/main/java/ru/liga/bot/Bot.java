@@ -55,6 +55,7 @@ public class Bot extends TelegramLongPollingCommandBot {
             CommandProcessingLogic commandProcessingLogic = new CommandProcessingLogic();
             String reply = commandProcessingLogic.commandExecutor(commandLine);
             if (text.contains(OUTPUT_GRAPH_COMMAND)) {
+                reply = "Выше представлен график с прогнозом курсом валют";
                 File file = new File(GraphFormation.PHOTO_PATH);
                 sendMessageToChat(chatId, userName, file);
             }

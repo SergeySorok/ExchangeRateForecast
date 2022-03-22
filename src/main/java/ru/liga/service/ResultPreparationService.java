@@ -1,5 +1,6 @@
 package ru.liga.service;
 
+import com.github.sh0nk.matplotlib4j.Plot;
 import org.apache.commons.cli.CommandLine;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
@@ -33,16 +34,24 @@ public class ResultPreparationService {
         return result;
     }
 
-    public static StringBuilder ResultPreparationPeriod
+    public static StringBuilder resultPreparationPeriodList
             (CommandLine commandLine, String currency, CurrencyFile currencyString, Algorithm algorithm) {
 
         RateService rateService = new RateService();
-        String periodStr = commandLine.getOptionValue(PERIOD_COMMAND);
-        Period period = parseCalculateType(periodStr);
+        Period period = parseCalculateType(commandLine.getOptionValue(PERIOD_COMMAND));
         StringBuilder result = new StringBuilder();
         String calculateRate = rateService.calculateRate(currencyString, period, algorithm);
         result.append(currency + LINE_BREAK + calculateRate + LINE_BREAK);
         return result;
     }
 
+  /*  public static Plot resultPreparationPeriodGraph
+            (CommandLine commandLine, String currency, CurrencyFile currencyString, Algorithm algorithm, Plot plt) {
+        RateService rateService = new RateService();
+        Period period = parseCalculateType(commandLine.getOptionValue(PERIOD_COMMAND));
+        StringBuilder result = new StringBuilder();
+        String calculateRate = rateService.calculateRate(currencyString, period, algorithm);
+        result.append(currency + LINE_BREAK + calculateRate + LINE_BREAK);
+        return result;
+    } */
 }
