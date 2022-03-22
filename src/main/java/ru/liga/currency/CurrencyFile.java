@@ -9,7 +9,7 @@ public enum CurrencyFile {
     TRY("TRY_F01_02_2005_T05_03_2022.csv");
 
     public static String[] parseCurrency(String currency) {
-        String[] currencyArray = currency.split (",");
+        String[] currencyArray = currency.split (",+");
         return currencyArray;
     }
 

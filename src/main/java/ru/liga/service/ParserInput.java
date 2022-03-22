@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.StringJoiner;
 
 public class ParserInput {
-    private static final String SPLIT_SEPARATOR = " ";
+    private static final String SPLIT_SEPARATOR = " +";
 
     public static CommandLine parseCommand(Options options, String text) {
         DefaultParser defaultParser = new DefaultParser();
@@ -28,7 +28,7 @@ public class ParserInput {
         try {
             return defaultParser.parse(options, argsAfterFilter);
         } catch (ParseException e) {
-            throw new CommandLineException();
+            throw new CommandLineException("Алгоритм не введен. Пожалуйста, введите команду корректно");
         }
     }
 

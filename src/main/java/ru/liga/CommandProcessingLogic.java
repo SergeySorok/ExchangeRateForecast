@@ -17,7 +17,6 @@ public class CommandProcessingLogic {
     public static final String DATE_COMMAND = "date";
     public static final String PERIOD_COMMAND = "period";
     private static final String OUTPUT_COMMAND = "output";
-    private static final String OUTPUT_COMMAND_LIST = "list";
     private static final String OUTPUT_COMMAND_GRAPH = "graph";
     private static final String ALGORITHM_COMMAND = "alg";
 

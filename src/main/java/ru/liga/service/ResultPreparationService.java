@@ -5,7 +5,6 @@ import ru.liga.algorithm.Algorithm;
 import ru.liga.calculate.Period;
 import ru.liga.currency.CurrencyFile;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
