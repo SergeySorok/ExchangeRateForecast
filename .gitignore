@@ -3,3 +3,6 @@
 # Project exclude paths
 /target/
 /.idea/
+/src/main/resources/config.properties
+/src/main/resources/graph.png
+/photo_file/graph.png

@@ -1,64 +1,66 @@
 package ru.liga.service;
 
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import ru.liga.algorithm.ActualAlgorithm;
 import ru.liga.algorithm.Algorithm;
 import ru.liga.algorithm.LinearRegression;
 import ru.liga.algorithm.MysticAlgorithm;
+import ru.liga.currency.CurrencyFile;
+import ru.liga.exception.CommandLineException;
+
+import java.util.Arrays;
+import java.util.StringJoiner;
 
 public class ParserInput {
-    public static CommandLine parseCommand(String[] args) {
-        Options options = new Options();
-        Option option1 = Option.builder("date")
-                .hasArg()
-                .argName("дата в формате DD.mm.yyyy")
-                .desc("Прогнозируемая дата")
-                .build();
-        Option option2 = Option.builder("period")
-                .hasArg()
-                .argName("запрашиваемый период")
-                .desc("week, month")
-                .build();
-        Option option3 = Option.builder("alg")
-                .hasArg()
-                .argName("алгоритм")
-                .desc("actual, mystic, line_regression ")
-                .required()
-                .build();
-        Option option4 = Option.builder("output")
-                .hasArg()
-                .argName("output_type")
-                .desc("способ вывода данных: graph, list")
-                .build();
-        options.addOption(option1)
-                .addOption(option2)
-                .addOption(option3)
-                .addOption(option4);
+    private static final String SPLIT_SEPARATOR = " +";
 
+    public static CommandLine parseCommand(Options options, String text) {
         DefaultParser defaultParser = new DefaultParser();
-        CommandLine commandLine = null;
+        String[] args = text.split(SPLIT_SEPARATOR);
+        String[] argsAfterFilter = Arrays.stream(args)
+                .filter(x -> !x.equals(""))
+                .filter(x -> !x.equals(","))
+                .toArray(String[]::new);
+
         try {
-            commandLine = defaultParser.parse(options, args);
-        } catch (org.apache.commons.cli.ParseException e) {
-            e.printStackTrace();
-            HelpFormatter helpFormatter = new HelpFormatter();
-            helpFormatter.printHelp("ExchangeRateForecast", options);
+            return defaultParser.parse(options, argsAfterFilter);
+        } catch (ParseException e) {
+            throw new CommandLineException("Алгоритм не введен. Пожалуйста, введите команду корректно");
         }
-        return commandLine;
     }
 
     public static Algorithm parseAlgorithm(String alg) {
-        Algorithm algorithm = switch (alg) {
-            case "actual" -> new ActualAlgorithm();
-            case "mystic" -> new MysticAlgorithm();
-            case "linear_regression" -> new LinearRegression();
-            default -> throw new IllegalArgumentException("No such algorithm: [%s]".formatted(alg));
-        };
-        return algorithm;
+        switch (alg) {
+            case "actual":
+                return new ActualAlgorithm();
+            case "mystic":
+                return new MysticAlgorithm();
+            case "linear_regression":
+                return new LinearRegression();
+            default:
+                throw new IllegalArgumentException("No such algorithm: [%s]" + alg);
+        }
     }
 
-    public static String[] parseCurrency(String currency) {
-        String[] currencyArray = currency.split (",");
-        return currencyArray;
+    public static int parseCurrenciesIndex(String[] args) {
+        StringJoiner errorMessage = new StringJoiner("\n");
+        int indexCurrencies = -1;
+
+        for (int i = 0; i < args.length; i++) {
+            for (CurrencyFile currency : CurrencyFile.values()) {
+                if (args[i].replace(' ', '0').contains(currency.name())) {
+                    indexCurrencies = i;
+                    break;
+                }
+            }
+        }
+        if (indexCurrencies < 0) {
+            errorMessage.add(String.format("Не указана валюта"));
+            throw new RuntimeException();
+        }
+        return indexCurrencies;
     }
 }

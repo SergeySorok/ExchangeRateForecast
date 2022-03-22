@@ -8,6 +8,19 @@ public enum CurrencyFile {
     USD("USD_F01_02_2005_T05_03_2022.csv"),
     TRY("TRY_F01_02_2005_T05_03_2022.csv");
 
+    public static String[] parseCurrency(String currency) {
+        String[] currencyArray = currency.split (",+");
+        return currencyArray;
+    }
+
+    public static CurrencyFile parseCurrencyType(String s) {
+        for (CurrencyFile currency : CurrencyFile.values()) {
+            if (currency.name().equalsIgnoreCase(s)) {
+                return currency;
+            }
+        }
+        return null;
+    }
 
     public final String filename;
 

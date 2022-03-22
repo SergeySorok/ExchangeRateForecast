@@ -1,36 +1,40 @@
 package ru.liga.algorithm;
 
-import ru.liga.dao.MyCurrency;
+import ru.liga.exception.CommandLineException;
+import ru.liga.repository.MyCurrency;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.List;
 
+import static ru.liga.algorithm.AlgorithmConstants.ERROR_DATE_MESSAGE;
+
 public class ActualAlgorithm implements Algorithm {
+
     @Override
     public List<MyCurrency> calculate(List<MyCurrency> currencies, LocalDate date) {
-        if (currencies == null || currencies.isEmpty()) {
-            return null;
-        }
-        for (LocalDate pivot = currencies.get(0).getDate().plusDays(1); pivot.isBefore(date) || pivot.isEqual(date); pivot = pivot.plusDays(1)) {
-            if (pivot.plusYears(2).isBefore(date)) {
-                throw new DateTimeException("Вы ввели слишком познюю дату: " + date);
+
+        LocalDate currentKnownDateFromFile = currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL)
+                .getDate().plusDays(AlgorithmConstants.ONE_DAY);
+        do {
+            if (currentKnownDateFromFile.plusYears(AlgorithmConstants.LATEST_FORECAST_DATE).isBefore(date)) {
+                throw new CommandLineException(ERROR_DATE_MESSAGE);
             }
             MyCurrency nextCurrency = new MyCurrency();
-            nextCurrency.setNominalValue(currencies.get(0).getNominalValue());
-            nextCurrency.setDate(pivot);
-            LocalDate finalPivot = pivot;
-            MyCurrency currency1 = currencies.stream()
-                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(2)))
-                    .findAny()
-                    .get();
-            MyCurrency currency2 = currencies.stream()
-                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(3)))
-                    .findAny()
-                    .get();
-            nextCurrency.setRate(currency1.getRate() / currency1.getNominalValue() + currency2.getRate() / currency2.getNominalValue());
+            nextCurrency.setNominalValue(currencies.get(AlgorithmConstants.FIRST_LINE_NOMINAL).getNominalValue());
+            nextCurrency.setDate(currentKnownDateFromFile);
+            LocalDate finalPivot = currentKnownDateFromFile;
+            MyCurrency currencyAsOfDateMinusTwoYears = currencies.stream()
+                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_2_YEARS)))
+                    .findFirst()
+                    .orElseThrow();
+            MyCurrency currencyAsOfDateMinusThreeYears = currencies.stream()
+                    .dropWhile(x -> x.getDate().isAfter(finalPivot.minusYears(AlgorithmConstants.DATE_FOR_FORECAST_3_YEARS)))
+                    .findFirst()
+                    .orElseThrow();
+            nextCurrency.setRate(currencyAsOfDateMinusTwoYears.getRate() / currencyAsOfDateMinusTwoYears.getNominalValue() + currencyAsOfDateMinusThreeYears.getRate() / currencyAsOfDateMinusThreeYears.getNominalValue());
             currencies.add(0, nextCurrency);
-        }
+            currentKnownDateFromFile = currentKnownDateFromFile.plusDays(AlgorithmConstants.ONE_DAY);
+        } while (!currentKnownDateFromFile.isEqual(date));
         return currencies;
     }
 }

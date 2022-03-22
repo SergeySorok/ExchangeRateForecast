@@ -1,7 +1,9 @@
 package ru.liga.algorithm;
 
-import ru.liga.dao.MyCurrency;
+import ru.liga.currency.CurrencyFile;
+import ru.liga.repository.MyCurrency;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
